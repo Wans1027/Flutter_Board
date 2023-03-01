@@ -24,7 +24,7 @@ class Post extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: 20,
+            vertical: 10,
             horizontal: 20,
           ),
           child: Row(
@@ -38,15 +38,37 @@ class Post extends StatelessWidget {
                     post.title,
                     style: const TextStyle(
                       color: Colors.black,
-                      fontSize: 16,
+                      fontSize: 22,
                     ),
                   ),
-                  Text(
-                    "작성자id:${post.memberId}",
-                    style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 15,
-                    ),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.thumb_up,
+                        color: Colors.red,
+                        size: 12,
+                      ),
+                      Text(
+                        "${post.likes}",
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "작성자:${post.writer}",
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
