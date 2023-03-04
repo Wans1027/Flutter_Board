@@ -9,12 +9,20 @@ class MainBoardModel {
 
 class BoardDataParse {
   final int id, memberId, likes;
-  final String title, writer;
+  final String title, writer, createdDate;
 
   BoardDataParse.fromJson(Map<String, dynamic> json)
       : id = json['id'],
         writer = json['writer'],
         memberId = json['memberId'],
         title = json['title'],
-        likes = json['likes'];
+        likes = json['likes'],
+        createdDate = json['createdDate'];
+}
+
+//mainText Get
+class DetailDataParse {
+  final String textMain;
+  DetailDataParse.fromJson(Map<String, dynamic> json)
+      : textMain = json['textMain'];
 }

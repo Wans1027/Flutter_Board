@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_board/screen/detail_screen.dart';
 
 import '../model/mainboard_model.dart';
 
@@ -13,9 +14,21 @@ class Post extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+              //페이지넘길때 모션추가
+              builder: (context) => DetailScreen(
+                  title: post.title,
+                  writer: post.writer,
+                  likes: post.likes,
+                  postId: post.id,
+                  createdDate: post.createdDate)),
+        );
+      },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 10),
+        margin: const EdgeInsets.only(bottom: 0),
         decoration: const BoxDecoration(
           //border: Border.all(color: Colors.green, width: 3),
           border: Border(bottom: BorderSide(color: Colors.green)),
@@ -24,7 +37,7 @@ class Post extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-            vertical: 10,
+            vertical: 5,
             horizontal: 20,
           ),
           child: Row(
@@ -38,21 +51,21 @@ class Post extends StatelessWidget {
                     post.title,
                     style: const TextStyle(
                       color: Colors.black,
-                      fontSize: 22,
+                      fontSize: 18,
                     ),
                   ),
                   Row(
                     children: [
                       const Icon(
-                        Icons.thumb_up,
+                        Icons.thumb_up_outlined,
                         color: Colors.red,
-                        size: 12,
+                        size: 11,
                       ),
                       Text(
                         "${post.likes}",
                         style: const TextStyle(
                           color: Colors.black,
-                          fontSize: 15,
+                          fontSize: 13,
                         ),
                       ),
                     ],
@@ -62,10 +75,10 @@ class Post extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "작성자:${post.writer}",
+                        "${post.createdDate.substring(11)} 작성자:${post.writer}",
                         style: const TextStyle(
                           color: Colors.black,
-                          fontSize: 15,
+                          fontSize: 13,
                         ),
                       ),
                     ],

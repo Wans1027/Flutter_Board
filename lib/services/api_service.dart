@@ -24,6 +24,18 @@ class ApiService {
     throw Error();
   }
 
+  static Future<DetailDataParse> getTextMain(int postId) async {
+    final url = Uri.parse('$baseUrl/post/$postId');
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final posts = jsonDecode(utf8.decode(response.bodyBytes));
+      return DetailDataParse.fromJson(posts);
+    }
+
+    throw Error();
+  }
+
   void getAllPost() async {
     final testUrl = Uri.parse("http://10.0.2.2:8080/api/posts-entity");
     final response = await http.get(testUrl);
