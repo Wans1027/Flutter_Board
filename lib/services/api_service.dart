@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_board/model/register_model.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/mainboard_model.dart';
@@ -36,13 +37,37 @@ class ApiService {
     throw Error();
   }
 
-  void getAllPost() async {
-    final testUrl = Uri.parse("http://10.0.2.2:8080/api/posts-entity");
-    final response = await http.get(testUrl);
+  Future<RegitserModel> loginMember(String name, String password) async {
+    final url = Uri.parse('$baseUrl/login');
+    final response = await http.get(url);
+
     if (response.statusCode == 200) {
-      print(response.body);
-      return;
+      final posts = jsonDecode(utf8.decode(response.bodyBytes));
+      return RegitserModel.fromJson(posts);
+    } else if (response.statusCode == 400) {
+      throw Error();
     }
-    throw Error();
+
+    throw Null;
+  }
+
+  Future<RegitserModel> registMember(String name, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/register'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{'name': name, 'password': password}),
+    );
+
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      return RegitserModel.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('Failed to create resgiter.');
+    }
   }
 }
