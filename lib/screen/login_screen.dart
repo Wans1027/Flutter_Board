@@ -2,8 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_board/screen/home_screen.dart';
 import 'package:flutter_board/screen/register_screen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:flutter_board/screen/home_screen.dart';
 
 import '../model/register_model.dart';
 import '../services/api_service.dart';
@@ -28,11 +29,15 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            const SizedBox(
+              height: 40,
+            ),
             TextField(
               controller: username1,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'UserName',
+                labelStyle: TextStyle(fontSize: 30),
               ),
             ),
             const SizedBox(
@@ -44,6 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Password',
+                labelStyle: TextStyle(fontSize: 30),
               ),
             ),
             Row(
@@ -59,7 +65,15 @@ class _LoginScreenState extends State<LoginScreen> {
                               builder: (context) => HomeScreen(),
                             )))
                         .catchError((onError) {
-                      print(onError);
+                      //print(onError);
+                      Fluttertoast.showToast(
+                        msg: onError.toString(),
+                        gravity: ToastGravity.TOP,
+                        backgroundColor: Colors.redAccent,
+                        fontSize: 20,
+                        textColor: Colors.white,
+                        toastLength: Toast.LENGTH_SHORT,
+                      );
                     });
 
                     //buildFutureBuilder();
@@ -70,17 +84,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
                 CupertinoButton(
-                    child: const Text(
-                      "회원가입",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const RegisterScreen(),
-                          ));
-                    })
+                  child: const Text(
+                    "회원가입",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const RegisterScreen(),
+                      ),
+                    );
+                  },
+                )
               ],
             ),
             // Row(
@@ -111,27 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  FutureBuilder<RegitserModel> buildFutureBuilder() {
-    return FutureBuilder<RegitserModel>(
-      future: loginModel = ApiService.loginMember('user1', '1234'),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          // Navigator.push(
-          //     context,
-          //     MaterialPageRoute(
-          //       builder: (context) => HomeScreen(),
-          //     ));
-          print('성공');
-        } else if (snapshot.hasError) {
-          // return Text("${snapshot.error}");
-          print("${snapshot.error}");
-        }
-
-        return const CircularProgressIndicator();
-      },
     );
   }
 }

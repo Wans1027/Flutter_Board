@@ -51,7 +51,7 @@ class ApiService {
 
       return RegitserModel.fromJson(jsonDecode(response.body));
     } else {
-      throw Exception();
+      throw Exception('사용자 정보가 일치하지 않음');
     }
   }
 
@@ -72,7 +72,7 @@ class ApiService {
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
-      throw Exception('Failed to create resgiter.');
+      throw Exception('Failed to create register.');
     }
   }
 }

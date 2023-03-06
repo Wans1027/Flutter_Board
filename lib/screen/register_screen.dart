@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_board/screen/login_screen.dart';
 import 'package:flutter_board/services/api_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../model/register_model.dart';
 
@@ -48,16 +49,29 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   "회원가입",
                   style: TextStyle(fontSize: 16),
                 ),
-                onPressed: () {
-                  print(username.text);
-                  print(password.text);
-                  regModel =
-                      ApiService.registMember(username.text, password.text);
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ));
+                onPressed: () async {
+                  regModel = await ApiService.registMember(
+                          username.text, password.text)
+                      .then((value) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          )))
+                      .catchError((onError) {
+                    Fluttertoast.showToast(
+                      msg: onError.toString(),
+                      gravity: ToastGravity.TOP,
+                      backgroundColor: Colors.redAccent,
+                      fontSize: 20,
+                      textColor: Colors.white,
+                      toastLength: Toast.LENGTH_SHORT,
+                    );
+                  });
+                  // Navigator.push(
+                  //     context,
+                  //     MaterialPageRoute(
+                  //       builder: (context) => const LoginScreen(),
+                  //     ));
                 })
           ],
         ),
