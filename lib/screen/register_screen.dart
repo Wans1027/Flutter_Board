@@ -52,7 +52,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   print(username.text);
                   print(password.text);
                   regModel =
-                      ApiService().registMember(username.text, password.text);
+                      ApiService.registMember(username.text, password.text);
                   Navigator.push(
                       context,
                       MaterialPageRoute(

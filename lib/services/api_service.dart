@@ -37,21 +37,26 @@ class ApiService {
     throw Error();
   }
 
-  Future<RegitserModel> loginMember(String name, String password) async {
-    final url = Uri.parse('$baseUrl/login');
-    final response = await http.get(url);
-
+  static Future<RegitserModel> loginMember(String name, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/login'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(<String, String>{'name': name, 'password': password}),
+    );
     if (response.statusCode == 200) {
-      final posts = jsonDecode(utf8.decode(response.bodyBytes));
-      return RegitserModel.fromJson(posts);
-    } else if (response.statusCode == 400) {
-      throw Error();
-    }
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
 
-    throw Null;
+      return RegitserModel.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception();
+    }
   }
 
-  Future<RegitserModel> registMember(String name, String password) async {
+  static Future<RegitserModel> registMember(
+      String name, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register'),
       headers: <String, String>{
