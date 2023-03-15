@@ -14,7 +14,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  late Future<RegitserModel> regModel;
+  late Future<RegitserModel>? regModel;
   final username = TextEditingController();
   final password = TextEditingController();
   final password2 = TextEditingController();
@@ -45,6 +45,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 labelText: 'Password',
               ),
             ),
+            TextField(
+              controller: password2,
+              obscureText: true,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Password confirm',
+              ),
+            ),
             CupertinoButton(
                 child: const Text(
                   "회원가입",
@@ -52,13 +60,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
                 onPressed: () async {
                   regModel = await ApiService.registMember(
-                          username.text, password.text)
-                      .then((value) => Navigator.push(
+                          username.text, password.text, password2.text)
+                      .then(
+                    (value) {
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => const LoginScreen(),
-                          )))
-                      .catchError((onError) {
+                          ));
+                      Fluttertoast.showToast(msg: "회원가입성공");
+                    },
+                  ).catchError((onError) {
                     Fluttertoast.showToast(
                       msg: onError.toString(),
                       gravity: ToastGravity.TOP,
@@ -68,11 +80,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       toastLength: Toast.LENGTH_SHORT,
                     );
                   });
-                  // Navigator.push(
-                  //     context,
-                  //     MaterialPageRoute(
-                  //       builder: (context) => const LoginScreen(),
-                  //     ));
                 })
           ],
         ),

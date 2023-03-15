@@ -6,19 +6,16 @@ import 'package:http/http.dart' as http;
 import '../model/mainboard_model.dart';
 
 class ApiService {
-  static const String baseUrl = "http://10.0.2.2:8080/api";
+  static const String baseUrl = "http://10.0.2.2:8080";
   static const String text = "posts";
-
+  static String token = "";
   static Future<List<BoardDataParse>> getAllPosts() async {
     List<BoardDataParse> postData = [];
 
-    final url = Uri.parse('$baseUrl/$text');
+    final url = Uri.parse('$baseUrl/api/$text');
     final response = await http.get(
       url,
-      headers: {
-        'Authorization':
-            'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMyIsImlkIjoxNjAyLCJleHAiOjE2Nzk3NDM2MTQsInVzZXJuYW1lIjoidXNlcjMifQ.jhZbudHDaJ8v_OlZxWmm464p7T364V9dNu7xMwSOt3lGcA9R-Ewqy6tdz_dIadRpEafMT-eIU4vMZN15z0loHA',
-      },
+      headers: {'Authorization': token},
     );
     if (response.statusCode == 200) {
       final posts = jsonDecode(utf8.decode(response.bodyBytes));
@@ -32,13 +29,10 @@ class ApiService {
   }
 
   static Future<DetailDataParse> getTextMain(int postId) async {
-    final url = Uri.parse('$baseUrl/post/$postId');
+    final url = Uri.parse('$baseUrl/api/post/$postId');
     final response = await http.get(
       url,
-      headers: {
-        'Authorization':
-            'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyMyIsImlkIjoxNjAyLCJleHAiOjE2Nzk3NDM2MTQsInVzZXJuYW1lIjoidXNlcjMifQ.jhZbudHDaJ8v_OlZxWmm464p7T364V9dNu7xMwSOt3lGcA9R-Ewqy6tdz_dIadRpEafMT-eIU4vMZN15z0loHA',
-      },
+      headers: {'Authorization': token},
     );
 
     if (response.statusCode == 200) {
@@ -64,6 +58,10 @@ class ApiService {
       // then parse the JSON.
 
       //return RegitserModel.fromJson(jsonDecode(response.body));
+      var header = response.headers;
+      var authtoken = header["authorization"];
+      print(authtoken);
+      token = authtoken.toString();
       return null;
     } else {
       throw Exception('사용자 정보가 일치하지 않음');
@@ -71,13 +69,17 @@ class ApiService {
   }
 
   static Future<RegitserModel> registMember(
-      String name, String password) async {
+      String username, String password, String password2) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
-      body: jsonEncode(<String, String>{'name': name, 'password': password}),
+      body: jsonEncode(<String, String>{
+        'username': username,
+        'password1': password,
+        'password2': password2
+      }),
     );
 
     if (response.statusCode == 200) {

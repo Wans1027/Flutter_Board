@@ -59,12 +59,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   onPressed: () async {
                     loginModel = await ApiService.loginMember(
                             username1.text, password1.text)
-                        .then((value) => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => HomeScreen(),
-                            )))
-                        .catchError((onError) {
+                        .then((value) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => HomeScreen(),
+                        ),
+                      );
+                      Fluttertoast.showToast(msg: "로그인성공");
+                    }).catchError((onError) {
                       print(onError);
                       Fluttertoast.showToast(
                         msg: onError.toString(),
