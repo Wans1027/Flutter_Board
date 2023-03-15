@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               builder: (context) => HomeScreen(),
                             )))
                         .catchError((onError) {
-                      //print(onError);
+                      print(onError);
                       Fluttertoast.showToast(
                         msg: onError.toString(),
                         gravity: ToastGravity.TOP,

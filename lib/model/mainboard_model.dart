@@ -1,10 +1,10 @@
 class MainBoardModel {
-  final List data;
-  final int count;
+  final List content;
+  final int totalElements;
 
   MainBoardModel.fromJson(Map<String, dynamic> json)
-      : data = json['data'],
-        count = json['count'];
+      : content = json['content'],
+        totalElements = json['totalElements'];
 }
 
 class BoardDataParse {

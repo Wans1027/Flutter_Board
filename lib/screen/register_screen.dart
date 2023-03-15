@@ -17,6 +17,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late Future<RegitserModel> regModel;
   final username = TextEditingController();
   final password = TextEditingController();
+  final password2 = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
