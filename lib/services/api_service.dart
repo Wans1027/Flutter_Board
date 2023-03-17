@@ -48,7 +48,7 @@ class ApiService {
       throw Error();
     }
 
-    throw Null;
+    throw Error();
   }
 
   Future<RegitserModel> registMember(String name, String password) async {
