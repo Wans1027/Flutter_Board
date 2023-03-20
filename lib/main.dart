@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_board/screen/writePost_screen.dart';
+import 'package:flutter_board/screen/login_screen.dart';
 
 void main() {
   //ApiService().createAlbum('newUser02', '1515');
@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    //return const MaterialApp(home: LoginScreen());
-    return const MaterialApp(home: WritePost());
+    return const MaterialApp(home: LoginScreen());
+    //return const MaterialApp(home: WritePost());
   }
 }

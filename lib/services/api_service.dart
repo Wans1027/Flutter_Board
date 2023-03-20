@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_board/model/main_model.dart';
 import 'package:flutter_board/model/register_model.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decode/jwt_decode.dart';
 
 import '../model/mainboard_model.dart';
 
@@ -11,6 +11,7 @@ class ApiService {
   static const String baseUrl = "http://10.0.2.2:8080";
   static const String text = "posts";
   static String token = "";
+
   static Future<List<BoardDataParse>> getAllPosts() async {
     List<BoardDataParse> postData = [];
 
@@ -95,6 +96,31 @@ class ApiService {
     }
   }
 
+  static Future<RegitserModel> postWrite(String title, String mainText) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/posts'),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token
+      },
+      body: jsonEncode(<String, dynamic>{
+        'memberId': tokenParse(token),
+        'title': title,
+        'mainText': mainText
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      return RegitserModel.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('Failed to create register.');
+    }
+  }
+
   static Future<dynamic> patchUserProfileImage(
       dynamic input, int postId) async {
     print("프로필 사진을 서버에 업로드 합니다.");
@@ -111,14 +137,20 @@ class ApiService {
       print('성공적으로 업로드했습니다');
       return response.data;
     } catch (e) {
-      print(e);
+      throw Exception('업로드에 실패했습니다');
     }
   }
 
-  static TokenModel? tokenParse() {
+  static int tokenParse(String jwt) {
     //토큰에 있는 id값 가져오기
-    var payload = token.split(".")[1];
-    var result = utf8.decode(base64Url.decode(payload));
-    return TokenModel.fromJson(jsonDecode(result));
+    // var payload = token.split(".")[1];
+    // print(payload);
+    // var result = utf8.decode(base64Url.decode(payload));
+    // print(result);
+    Map<String, dynamic> payload = Jwt.parseJwt(jwt);
+    var id = payload['id'];
+    print(id);
+    //return TokenModel.fromJson(jsonDecode(result));
+    return id;
   }
 }

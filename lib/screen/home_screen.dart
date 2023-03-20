@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_board/screen/detail_screen.dart';
+import 'package:flutter_board/screen/writePost_screen.dart';
 import 'package:flutter_board/services/api_service.dart';
 
 import '../model/mainboard_model.dart';
@@ -45,6 +46,29 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+      floatingActionButton: SizedBox(
+        width: 80,
+        child: FittedBox(
+          child: FloatingActionButton.extended(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const WritePost(),
+                ),
+              );
+            },
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
+            label: const Text(
+              '글쓰기',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+        ),
+      ),
+      floatingActionButtonLocation:
+          FloatingActionButtonLocation.miniCenterFloat,
       body: SingleChildScrollView(
         child: FutureBuilder(
           future: mainboard,
@@ -76,6 +100,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   // Post(
                   //   post: post,
                   // ),
+                  const SizedBox(
+                    height: 60,
+                  ),
+                  //FloatingActionButton(onPressed: () {})
                 ],
               );
             }

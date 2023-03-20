@@ -1,4 +1,6 @@
+// ignore: file_names
 import 'dart:io';
+import 'package:flutter_board/model/register_model.dart';
 import 'package:flutter_board/services/api_service.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -19,7 +21,7 @@ class _MyWidgetState extends State<WritePost> {
 
   final ImagePicker imgpicker = ImagePicker();
   List<XFile>? imagefiles;
-  late FormData? formData;
+  FormData? formData;
 
   openImages() async {
     try {
@@ -41,6 +43,8 @@ class _MyWidgetState extends State<WritePost> {
     }
   }
 
+  late Future<RegitserModel> postModel;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,8 +58,11 @@ class _MyWidgetState extends State<WritePost> {
             padding: const EdgeInsets.all(8),
             child: ElevatedButton(
                 onPressed: () async {
+                  var post =
+                      await ApiService.postWrite(title.text, mainText.text);
+
                   if (formData != null) {
-                    await ApiService.patchUserProfileImage(formData, 4);
+                    await ApiService.patchUserProfileImage(formData, post.id);
                   }
                 },
                 style: ElevatedButton.styleFrom(
