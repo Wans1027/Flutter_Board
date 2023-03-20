@@ -1,12 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_board/screen/detail_screen.dart';
 import 'package:flutter_board/services/api_service.dart';
 
 import '../model/mainboard_model.dart';
 import '../widget/post_widget.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
-  final Future<List<BoardDataParse>> mainboard = ApiService.getAllPosts();
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late Future<List<BoardDataParse>> mainboard;
+
+  @override
+  void initState() {
+    super.initState();
+    mainboard = ApiService.getAllPosts();
+    print("reset");
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    super.setState(fn);
+    mainboard = ApiService.getAllPosts();
+    print("state");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +55,27 @@ class HomeScreen extends StatelessWidget {
               return Column(
                 children: [
                   for (var post in snapshot.data!)
-                    Post(
-                      post: post,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              //페이지넘길때 모션추가
+                              builder: (context) => DetailScreen(
+                                  title: post.title,
+                                  writer: post.writer,
+                                  likes: post.likes,
+                                  postId: post.id,
+                                  createdDate: post.createdDate)),
+                        ).then((value) {
+                          setState(() {});
+                        });
+                      },
+                      child: Post(post: post),
                     ),
+                  // Post(
+                  //   post: post,
+                  // ),
                 ],
               );
             }

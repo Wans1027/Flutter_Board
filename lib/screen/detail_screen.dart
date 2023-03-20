@@ -71,7 +71,8 @@ class _DetailScreenState extends State<DetailScreen> {
             width: 300,
             height: 300,
             decoration: BoxDecoration(border: Border.all()),
-            child: Image.network("http://10.0.2.2:8080/items/get/chunseek.gif"),
+            child: Image.network(
+                "http://10.0.2.2:8080/items/get/3f6b4558-2486-4778-a754-27e63332d1a1.jpg"),
           )
         ],
       ),
