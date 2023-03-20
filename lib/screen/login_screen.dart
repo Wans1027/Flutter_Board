@@ -102,31 +102,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 )
               ],
             ),
-            // Row(
-            //   children: [
-            //     FutureBuilder(
-            //       future: loginModel = ApiService.loginMember('user1', '1234')
-            //           .catchError((onError) {
-            //         print(onError);
-            //       }),
-            //       builder: (context, snapshot) {
-            //         if (snapshot.hasData) {
-            //           Future.delayed(const Duration(seconds: 1), () {
-            //             Navigator.push(
-            //                 context,
-            //                 MaterialPageRoute(
-            //                   builder: (context) => HomeScreen(),
-            //                 ));
-            //           });
-            //           //return const Text("Success");
-            //         } else if (snapshot.hasError) {
-            //           return const Text("fail");
-            //         }
-            //         return const CircularProgressIndicator();
-            //       },
-            //     )
-            //   ],
-            // )
           ],
         ),
       ),

@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
+import 'package:flutter_board/model/main_model.dart';
 import 'package:flutter_board/model/register_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -91,5 +93,32 @@ class ApiService {
       // then throw an exception.
       throw Exception('Failed to create register.');
     }
+  }
+
+  static Future<dynamic> patchUserProfileImage(
+      dynamic input, int postId) async {
+    print("프로필 사진을 서버에 업로드 합니다.");
+    var dio = Dio();
+    try {
+      dio.options.contentType = 'multipart/form-data';
+      dio.options.maxRedirects.isFinite;
+
+      dio.options.headers = {'Authorization': token};
+      var response = await dio.post(
+        '$baseUrl/items/new/$postId',
+        data: input,
+      );
+      print('성공적으로 업로드했습니다');
+      return response.data;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static TokenModel? tokenParse() {
+    //토큰에 있는 id값 가져오기
+    var payload = token.split(".")[1];
+    var result = utf8.decode(base64Url.decode(payload));
+    return TokenModel.fromJson(jsonDecode(result));
   }
 }
