@@ -19,6 +19,7 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   late Future<DetailDataParse> mainText;
+  String imageURL = "http://10.0.2.2:8080/items/get/";
 
   @override
   void initState() {
@@ -43,38 +44,50 @@ class _DetailScreenState extends State<DetailScreen> {
         //   ),
         // ),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              FutureBuilder(
-                future: mainText,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Column(
-                      children: [
-                        Text(
-                          '${widget.title}\n${snapshot.data!.textMain}\n ',
-                          style: const TextStyle(fontSize: 20),
-                        ),
-                      ],
-                    );
-                  }
-                  return const Text("...");
-                },
-              ),
-            ],
-          ),
-          Container(
-            width: 300,
-            height: 300,
-            decoration: BoxDecoration(border: Border.all()),
-            child: Image.network(
-                "http://10.0.2.2:8080/items/get/3f6b4558-2486-4778-a754-27e63332d1a1.jpg"),
-          )
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                FutureBuilder(
+                  future: mainText,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      var imageList = snapshot.data!.images.split(", ");
+                      print(imageList);
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            '${widget.title}\n${snapshot.data!.textMain}\n ',
+                            style: const TextStyle(fontSize: 20),
+                          ),
+                          for (var image in imageList)
+                            SizedBox(
+                              width: 300,
+                              //height: 300,
+                              //decoration: BoxDecoration(border: Border.all()),
+                              child: Image.network("$imageURL$image"),
+                            ),
+                        ],
+                      );
+                    }
+                    return const Text("...");
+                  },
+                ),
+              ],
+            ),
+            // Container(
+            //   width: 300,
+            //   height: 300,
+            //   decoration: BoxDecoration(border: Border.all()),
+            //   child: Image.network(
+            //       "${imageURL}3f6b4558-2486-4778-a754-27e63332d1a1.jpg"),
+            // )
+          ],
+        ),
       ),
     );
   }
