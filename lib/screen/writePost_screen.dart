@@ -1,6 +1,7 @@
 // ignore: file_names
 import 'dart:io';
 import 'package:flutter_board/model/register_model.dart';
+import 'package:flutter_board/screen/home_screen.dart';
 import 'package:flutter_board/services/api_service.dart';
 import 'package:http_parser/http_parser.dart';
 
@@ -64,6 +65,11 @@ class _MyWidgetState extends State<WritePost> {
                   if (formData != null) {
                     await ApiService.patchUserProfileImage(formData, post.id);
                   }
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const HomeScreen(),
+                      ));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red[400],

@@ -46,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ),
+      drawer: const SideView(),
       floatingActionButton: SizedBox(
         width: 80,
         child: FittedBox(
@@ -114,6 +115,40 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           },
         ),
+      ),
+    );
+  }
+}
+
+class SideView extends StatelessWidget {
+  const SideView({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: [
+          ListTile(
+            leading: Icon(Icons.home, color: Colors.grey[850]),
+            title: const Text('Home'),
+            onTap: () {},
+            trailing: const Icon(Icons.add),
+          ),
+          ListTile(
+            leading: Icon(Icons.settings, color: Colors.grey[850]),
+            title: const Text('Setting'),
+            onTap: () {},
+            trailing: const Icon(Icons.add),
+          ),
+          ListTile(
+            leading: Icon(Icons.question_answer, color: Colors.grey[850]),
+            title: const Text('Q&A'),
+            onTap: () {},
+            trailing: const Icon(Icons.add),
+          ),
+        ],
       ),
     );
   }

@@ -24,7 +24,11 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   void initState() {
     super.initState();
-    mainText = ApiService.getTextMain(widget.postId);
+    try {
+      mainText = ApiService.getTextMain(widget.postId);
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -56,7 +60,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       var imageList = snapshot.data!.images.split(", ");
-                      print(imageList);
+                      print(imageList[0]);
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -65,12 +69,13 @@ class _DetailScreenState extends State<DetailScreen> {
                             style: const TextStyle(fontSize: 20),
                           ),
                           for (var image in imageList)
-                            SizedBox(
-                              width: 300,
-                              //height: 300,
-                              //decoration: BoxDecoration(border: Border.all()),
-                              child: Image.network("$imageURL$image"),
-                            ),
+                            if (imageList[0] != " ")
+                              SizedBox(
+                                width: 300,
+                                //height: 300,
+                                //decoration: BoxDecoration(border: Border.all()),
+                                child: Image.network("$imageURL$image"),
+                              ),
                         ],
                       );
                     }

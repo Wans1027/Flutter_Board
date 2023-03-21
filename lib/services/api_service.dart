@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_board/model/register_model.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 
@@ -15,7 +17,7 @@ class ApiService {
   static Future<List<BoardDataParse>> getAllPosts() async {
     List<BoardDataParse> postData = [];
 
-    final url = Uri.parse('$baseUrl/api/$text');
+    final url = Uri.parse('$baseUrl/api/posts?page=0&size=20&sort=id,DESC');
     final response = await http.get(
       url,
       headers: {'Authorization': token},
@@ -33,42 +35,58 @@ class ApiService {
 
   static Future<DetailDataParse> getTextMain(int postId) async {
     final url = Uri.parse('$baseUrl/api/post/$postId');
-    final response = await http.get(
-      url,
-      headers: {'Authorization': token},
-    );
+    try {
+      final response = await http.get(
+        url,
+        headers: {'Authorization': token},
+      );
 
-    if (response.statusCode == 200) {
-      final posts = jsonDecode(utf8.decode(response.bodyBytes));
-      return DetailDataParse.fromJson(posts);
+      if (response.statusCode == 200) {
+        final posts = jsonDecode(utf8.decode(response.bodyBytes));
+        return DetailDataParse.fromJson(posts);
+      }
+    } on Exception catch (e) {
+      // TODO
+      print(e);
     }
-
-    throw Error();
+    throw Exception();
   }
 
   static Future<RegitserModel?> loginMember(
       String name, String password) async {
-    final response = await http.post(
-      Uri.parse('http://10.0.2.2:8080/login'),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-      },
-      body:
-          jsonEncode(<String, String>{'username': name, 'password': password}),
-    );
-    if (response.statusCode == 200) {
-      // If the server did return a 201 CREATED response,
-      // then parse the JSON.
+    Timer t = Timer(const Duration(seconds: 3), () {
+      print('서버와연결리안됨');
+      Fluttertoast.showToast(msg: "서버와 연결이 원활하지 않음");
 
-      //return RegitserModel.fromJson(jsonDecode(response.body));
-      var header = response.headers;
-      var authtoken = header["authorization"];
-      print(authtoken);
-      token = authtoken.toString();
-      return null;
-    } else {
-      throw Exception('사용자 정보가 일치하지 않음');
+      return;
+    });
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8080/login'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(
+            <String, String>{'username': name, 'password': password}),
+      );
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        var header = response.headers;
+        var authtoken = header["authorization"];
+        print(authtoken);
+        token = authtoken.toString();
+        t.cancel();
+        return null;
+      } else if (response.statusCode == 401) {
+        t.cancel();
+        throw Exception('사용자 정보가 일치하지 않음');
+      }
+    } catch (e) {
+      print(e);
+      rethrow;
     }
+    return null;
   }
 
   static Future<RegitserModel> registMember(
