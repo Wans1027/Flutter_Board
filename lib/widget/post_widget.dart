@@ -36,9 +36,12 @@ class Post extends StatelessWidget {
                 Text(
                   post.title,
                   style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 18,
-                  ),
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w400),
+                ),
+                const SizedBox(
+                  height: 5,
                 ),
                 Row(
                   children: [
@@ -68,7 +71,7 @@ class Post extends StatelessWidget {
                       ),
                     ),
                     const Padding(
-                      padding: EdgeInsets.only(right: 160.0),
+                      padding: EdgeInsets.only(right: 140.0),
                     ),
                     Text(
                       post.createdDate.substring(0, 16),

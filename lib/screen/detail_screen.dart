@@ -61,22 +61,58 @@ class _DetailScreenState extends State<DetailScreen> {
                     if (snapshot.hasData) {
                       var imageList = snapshot.data!.images.split(", ");
                       print(imageList[0]);
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${widget.title}\n${snapshot.data!.textMain}\n ',
-                            style: const TextStyle(fontSize: 20),
-                          ),
-                          for (var image in imageList)
-                            if (imageList[0] != " ")
-                              SizedBox(
-                                width: 300,
-                                //height: 300,
-                                //decoration: BoxDecoration(border: Border.all()),
-                                child: Image.network("$imageURL$image"),
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 350,
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                    bottom: BorderSide(color: Colors.black)),
                               ),
-                        ],
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.writer,
+                                    style: const TextStyle(fontSize: 22),
+                                  ),
+                                  Text(widget.createdDate)
+                                ],
+                              ),
+                            ),
+                            Text(
+                              widget.title,
+                              style: const TextStyle(
+                                  fontSize: 30, fontWeight: FontWeight.w600),
+                            ),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            Text(
+                              snapshot.data!.textMain,
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                            const SizedBox(
+                              height: 12,
+                            ),
+                            for (var image in imageList)
+                              if (imageList[0] != " ")
+                                SizedBox(
+                                    width: 300,
+                                    //height: 300,
+                                    //decoration: BoxDecoration(border: Border.all()),
+                                    child: Image(
+                                        image: NetworkImage("$imageURL$image",
+                                            headers: {
+                                          "Authorization":
+                                              "Bearer ${ApiService.token}"
+                                        })) //Image.network("$imageURL$image"),
+                                    ),
+                          ],
+                        ),
                       );
                     }
                     return const Text("...");

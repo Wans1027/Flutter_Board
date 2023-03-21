@@ -135,7 +135,33 @@ class ApiService {
     } else {
       // If the server did not return a 201 CREATED response,
       // then throw an exception.
-      throw Exception('Failed to create register.');
+      throw Exception('서버와 응답이 되지 않음.');
+    }
+  }
+
+  static Future<RegitserModel> reviseWrite(
+      String title, String mainText, int postId) async {
+    final response = await http.patch(
+      Uri.parse('$baseUrl/api/posts/$postId'),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token
+      },
+      body: jsonEncode(<String, dynamic>{
+        'memberId': tokenParse(token),
+        'title': title,
+        'mainText': mainText
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      // If the server did return a 201 CREATED response,
+      // then parse the JSON.
+      return RegitserModel.fromJson(jsonDecode(response.body));
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('서버와 응답이 되지 않음.');
     }
   }
 
@@ -155,7 +181,7 @@ class ApiService {
       print('성공적으로 업로드했습니다');
       return response.data;
     } catch (e) {
-      throw Exception('업로드에 실패했습니다');
+      //throw Exception('업로드에 실패했습니다');
     }
   }
 
@@ -170,5 +196,24 @@ class ApiService {
     print(id);
     //return TokenModel.fromJson(jsonDecode(result));
     return id;
+  }
+
+  static Future<List<BoardDataParse>> getSingleIdPosts() async {
+    List<BoardDataParse> postData = [];
+
+    final url = Uri.parse('$baseUrl/api/posts/${tokenParse(token)}');
+    final response = await http.get(
+      url,
+      headers: {'Authorization': token},
+    );
+    if (response.statusCode == 200) {
+      final posts = jsonDecode(utf8.decode(response.bodyBytes));
+      final aaa = MainBoardModel.fromJson(posts).content;
+      for (var element in aaa) {
+        postData.add(BoardDataParse.fromJson(element));
+      }
+      return postData;
+    }
+    throw Error();
   }
 }
