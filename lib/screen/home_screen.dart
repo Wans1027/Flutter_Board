@@ -16,6 +16,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late Future<List<BoardDataParse>> mainboard;
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void setState(VoidCallback fn) {
     super.setState(fn);
     mainboard = ApiService.getAllPosts();
+
     print("state");
   }
 
@@ -35,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       child: Scaffold(
+        key: scaffoldKey,
         appBar: AppBar(
           centerTitle: true,
           elevation: 2, //그림자
@@ -80,6 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
           strokeWidth: 3.0, // 스피너 화살표 크기
           onRefresh: () async {
             setState(() {});
+            //mainboard = ApiService.getAllPosts();
           },
           child: SingleChildScrollView(
             child: FutureBuilder(
@@ -103,10 +107,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       likes: post.likes,
                                       postId: post.id,
                                       createdDate: post.createdDate)),
-                            );
-                            // .then((value) {
-                            //   setState(() {});
-                            // });
+                            ).then((value) {
+                              setState(() {});
+                            });
                           },
                           child: Padding(
                               padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
@@ -157,6 +160,7 @@ class SideView extends StatelessWidget {
             leading: Icon(Icons.question_answer, color: Colors.grey[850]),
             title: const Text('내가 쓴 게시글'),
             onTap: () {
+              Navigator.pop(context);
               Navigator.push(
                   context,
                   MaterialPageRoute(

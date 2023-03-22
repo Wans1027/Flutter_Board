@@ -46,7 +46,7 @@ class _MyPostsViewState extends State<MyPostsView> {
           ),
         ),
       ),
-      drawer: const SideView(),
+      //drawer: const SideView(),
       body: SingleChildScrollView(
         child: FutureBuilder(
           future: mainboard,

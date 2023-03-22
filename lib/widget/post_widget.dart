@@ -34,7 +34,9 @@ class Post extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  post.title,
+                  post.title.length < 25
+                      ? post.title
+                      : '${post.title.substring(0, 25)}..',
                   style: const TextStyle(
                       color: Colors.black,
                       fontSize: 20,
