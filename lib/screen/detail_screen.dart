@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_board/model/mainboard_model.dart';
 import 'package:flutter_board/services/api_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import '../services/commentApi_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final String title, writer, createdDate;
@@ -19,20 +22,45 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   late Future<DetailDataParse> mainText;
+  late Future<List<CommentDataParse>> comments;
+  final commentText = TextEditingController();
   String imageURL = "http://10.0.2.2:8080/items/get/";
+
+  int cnt = 0;
+  bool isComment = true;
+  FocusNode myFocusNode = FocusNode();
+  int group = 0;
 
   @override
   void initState() {
     super.initState();
+    myFocusNode = FocusNode();
+    group = 0;
     try {
+      comments = CommentApiService.getComments(widget.postId);
       mainText = ApiService.getTextMain(widget.postId);
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    cnt = 0;
+    group = 0;
+    isComment = true;
+    comments = CommentApiService.getComments(widget.postId);
+    super.setState(fn);
+  }
+
+  @override
+  void dispose() {
+    // 폼이 삭제되면 myFocusNode도 삭제됨
+    myFocusNode.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    cnt = 0;
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
@@ -48,6 +76,48 @@ class _DetailScreenState extends State<DetailScreen> {
         //   ),
         // ),
       ),
+      bottomNavigationBar: Padding(
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: BottomAppBar(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(25, 5, 10, 3),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Flexible(
+                  child: TextField(
+                    controller: commentText,
+                    focusNode: myFocusNode,
+                    decoration: InputDecoration(
+                      hintText: isComment ? '댓글을 입력하세요' : '대댓글을 입력하세요',
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Transform.rotate(
+                  angle: -0.7,
+                  child: IconButton(
+                      onPressed: () async {
+                        //댓글전송
+                        isComment
+                            ? await submitComment(0, cnt + 1)
+                            : await submitComment(1, group);
+                        if (context.mounted) FocusScope.of(context).unfocus();
+                        commentText.clear();
+                      },
+                      icon: const Icon(
+                        Icons.send,
+                        fill: 0.5,
+                      )),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -60,7 +130,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       var imageList = snapshot.data!.images.split(", ");
-                      print(imageList[0]);
+                      //print(imageList[0]);
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
                         child: Column(
@@ -120,16 +190,136 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
               ],
             ),
-            // Container(
-            //   width: 300,
-            //   height: 300,
-            //   decoration: BoxDecoration(border: Border.all()),
-            //   child: Image.network(
-            //       "${imageURL}3f6b4558-2486-4778-a754-27e63332d1a1.jpg"),
-            // )
+            FutureBuilder(
+              future: comments,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Column(
+                    children: [
+                      for (var com in snapshot.data!)
+                        com.hierarchy == 0
+                            ? motherComment(com)
+                            : childComment(com)
+                    ],
+                  );
+                }
+                return const Center(
+                  child: CircularProgressIndicator(), //로딩중 동그라미 그림
+                );
+              },
+            ),
+            const SizedBox(
+              height: 30,
+            )
           ],
         ),
       ),
     );
+  }
+
+  Future<void> submitComment(int hiererach, int group) async {
+    try {
+      await CommentApiService.commentWrite(
+          widget.postId, commentText.text, hiererach, 1, group);
+      setState(() {});
+    } on Exception catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
+  Padding childComment(CommentDataParse com) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+      child: Container(
+        padding: const EdgeInsets.all(4),
+        width: double.infinity,
+        // decoration: const BoxDecoration(
+        //     border: Border(bottom: BorderSide(color: Colors.black))),
+        child: Row(
+          children: [
+            const SizedBox(
+              width: 25,
+            ),
+            const Icon(
+              Icons.subdirectory_arrow_right_rounded,
+              size: 30,
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Container(
+              padding: const EdgeInsets.all(8),
+              width: 280,
+              decoration: const BoxDecoration(
+                  color: Colors.black12,
+                  borderRadius: BorderRadius.all(Radius.circular(10))),
+              child: commentStyle(com),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Map<dynamic, dynamic> bkey = {};
+
+  Padding motherComment(CommentDataParse com) {
+    cnt++;
+    var key = cnt;
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        width: double.infinity,
+        decoration: const BoxDecoration(
+            border: Border(top: BorderSide(color: Colors.black))),
+        //color: Colors.black26,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            commentStyle(com),
+            IconButton(
+              //key: ValueKey(key),
+              //대댓글달기
+              onPressed: () async {
+                FocusScope.of(context).requestFocus(myFocusNode);
+                isComment = false;
+                group = key;
+                //await submitComment(1, key);
+              },
+              icon: const Icon(Icons.chat_outlined),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Column commentStyle(CommentDataParse com) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.account_box_sharp),
+              const SizedBox(
+                width: 5,
+              ),
+              Text(
+                com.userName,
+                style: const TextStyle(color: Colors.black, fontSize: 20),
+              ),
+            ],
+          ),
+        ],
+      ),
+      Text(
+        com.comment,
+        style: const TextStyle(fontSize: 16),
+      ),
+      Text(com.createdDate)
+    ]);
   }
 }

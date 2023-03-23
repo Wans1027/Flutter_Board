@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter_board/model/register_model.dart';
 import 'package:flutter_board/services/api_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http_parser/http_parser.dart';
 
 import 'package:dio/dio.dart';
@@ -77,13 +78,22 @@ class _MyWidgetState extends State<RevisePost> {
             padding: const EdgeInsets.all(8),
             child: ElevatedButton(
                 onPressed: () async {
-                  var post = await ApiService.reviseWrite(
-                      title.text, mainText.text, widget.postId);
+                  FutureBuilder(
+                    future: ApiService.deletePost(widget.postId),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        Fluttertoast.showToast(msg: 'Error');
+                      }
+                      return const Center(
+                        child: CircularProgressIndicator(), //로딩중 동그라미 그림
+                      );
+                    },
+                  );
 
-                  if (formData != null) {
-                    await ApiService.patchUserProfileImage(formData, post.id);
+                  if (context.mounted) {
+                    Fluttertoast.showToast(msg: '삭제되었습니다.');
+                    Navigator.pop(context);
                   }
-                  if (context.mounted) Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red[400],
@@ -93,12 +103,35 @@ class _MyWidgetState extends State<RevisePost> {
                   ),
                 ),
                 child: const Text(
-                  '수정완료',
+                  '삭제하기',
                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
                 )),
           )
         ],
       ),
+      floatingActionButton: SizedBox(
+        width: 80,
+        child: FittedBox(
+          child: FloatingActionButton.extended(
+            onPressed: () async {
+              var post = await ApiService.reviseWrite(
+                  title.text, mainText.text, widget.postId);
+
+              if (formData != null) {
+                await ApiService.patchUserProfileImage(formData, post.id);
+              }
+              if (context.mounted) Navigator.pop(context);
+            },
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(30))),
+            label: const Text(
+              '수정완료',
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
       bottomNavigationBar: BottomAppBar(
           child: Row(
         mainAxisAlignment: MainAxisAlignment.start,

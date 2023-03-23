@@ -165,6 +165,23 @@ class ApiService {
     }
   }
 
+  static Future<void> deletePost(int postId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/api/posts/$postId'),
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'Authorization': token
+      },
+    );
+    if (response.statusCode == 200) {
+      Fluttertoast.showToast(msg: "삭제되었습니다.");
+    } else {
+      // If the server did not return a 201 CREATED response,
+      // then throw an exception.
+      throw Exception('서버와 응답이 되지 않음.');
+    }
+  }
+
   static Future<dynamic> patchUserProfileImage(
       dynamic input, int postId) async {
     print("프로필 사진을 서버에 업로드 합니다.");

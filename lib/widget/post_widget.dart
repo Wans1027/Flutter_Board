@@ -33,14 +33,16 @@ class Post extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  post.title.length < 25
-                      ? post.title
-                      : '${post.title.substring(0, 25)}..',
-                  style: const TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w400),
+                SizedBox(
+                  width: 300,
+                  child: Text(
+                    post.title,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400),
+                  ),
                 ),
                 const SizedBox(
                   height: 5,
