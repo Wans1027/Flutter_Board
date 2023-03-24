@@ -45,6 +45,7 @@ class Post extends StatelessWidget {
             //crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Column(
+                mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -72,10 +73,20 @@ class Post extends StatelessWidget {
                   ),
                   Row(
                     mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        "${post.createdDate.substring(11)} 작성자:${post.writer}",
+                        "작성자:${post.writer}",
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(right: 160.0),
+                      ),
+                      Text(
+                        post.createdDate.substring(0, 16),
                         style: const TextStyle(
                           color: Colors.black,
                           fontSize: 13,

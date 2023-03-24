@@ -9,3 +9,16 @@ class RegitserModel {
     );
   }
 }
+
+class LoginFailModel {
+  final String code, message;
+
+  const LoginFailModel({required this.code, required this.message});
+
+  factory LoginFailModel.fromJson(Map<String, dynamic> json) {
+    return LoginFailModel(
+      code: json['code'],
+      message: json['message'],
+    );
+  }
+}
