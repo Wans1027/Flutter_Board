@@ -29,6 +29,31 @@ class _LoginScreenState extends State<LoginScreen> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            SizedBox(
+                width: MediaQuery.of(context).size.width,
+                height: 100,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: 3,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              print(index);
+                            },
+                            child: Container(
+                                margin: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(3),
+                                    border: Border.all(
+                                        color: Colors.grey.shade400)),
+                                child: Text(index.toString())),
+                          )
+                        ],
+                      );
+                    })),
             const SizedBox(
               height: 40,
             ),
@@ -63,7 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HomeScreen(),
+                          builder: (context) => const HomeScreen(),
                         ),
                       );
                       Fluttertoast.showToast(msg: "로그인성공");
@@ -99,34 +124,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     );
                   },
-                )
+                ),
               ],
             ),
-            // Row(
-            //   children: [
-            //     FutureBuilder(
-            //       future: loginModel = ApiService.loginMember('user1', '1234')
-            //           .catchError((onError) {
-            //         print(onError);
-            //       }),
-            //       builder: (context, snapshot) {
-            //         if (snapshot.hasData) {
-            //           Future.delayed(const Duration(seconds: 1), () {
-            //             Navigator.push(
-            //                 context,
-            //                 MaterialPageRoute(
-            //                   builder: (context) => HomeScreen(),
-            //                 ));
-            //           });
-            //           //return const Text("Success");
-            //         } else if (snapshot.hasError) {
-            //           return const Text("fail");
-            //         }
-            //         return const CircularProgressIndicator();
-            //       },
-            //     )
-            //   ],
-            // )
           ],
         ),
       ),

@@ -23,6 +23,9 @@ class BoardDataParse {
 //mainText Get
 class DetailDataParse {
   final String textMain;
+  final String images;
+
   DetailDataParse.fromJson(Map<String, dynamic> json)
-      : textMain = json['textMain'];
+      : textMain = json['textMain'],
+        images = json['images'];
 }
