@@ -72,9 +72,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       Fluttertoast.showToast(
                         msg: onError.toString(),
                         gravity: ToastGravity.TOP,
-                        backgroundColor: Colors.redAccent,
-                        fontSize: 20,
-                        textColor: Colors.white,
+                        //backgroundColor: Colors.redAccent,
+                        //fontSize: 20,
+                        //textColor: Colors.white,
                         toastLength: Toast.LENGTH_SHORT,
                       );
                     });
