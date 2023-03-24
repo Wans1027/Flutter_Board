@@ -31,3 +31,13 @@ Widget _FetchAllPosts(context) {
         }));
   }
   */
+/*
+  Future<void> submitComment(int hiererach, int group) async {
+    try {
+      await CommentApiService.commentWrite(
+          widget.postId, commentText.text, hiererach, 1, group);
+      setState(() {});
+    } on Exception catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+  }*/

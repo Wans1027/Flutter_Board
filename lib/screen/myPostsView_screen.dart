@@ -32,63 +32,75 @@ class _MyPostsViewState extends State<MyPostsView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        elevation: 2, //그림자
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.green,
-        title: const Text(
-          "내가 쓴 게시글",
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w400,
+    return WillPopScope(
+      onWillPop: () {
+        return Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(),
+            )).then((value) {
+          setState(() {});
+          throw false;
+        });
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          elevation: 2, //그림자
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.green,
+          title: const Text(
+            "내가 쓴 게시글",
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ),
-      ),
-      //drawer: const SideView(),
-      body: SingleChildScrollView(
-        child: FutureBuilder(
-          future: mainboard,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              //서버가 응답했을때
-              //return const Text("There is data!");
-              return Column(
-                children: [
-                  for (var post in snapshot.data!)
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              //페이지넘길때 모션추가
-                              builder: (context) => RevisePost(
-                                  title: post.title,
-                                  writer: post.writer,
-                                  likes: post.likes,
-                                  postId: post.id,
-                                  createdDate: post.createdDate)),
-                        ).then((value) {
-                          setState(() {});
-                        });
-                      },
-                      child: Post(post: post),
+        //drawer: const SideView(),
+        body: SingleChildScrollView(
+          child: FutureBuilder(
+            future: mainboard,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                //서버가 응답했을때
+                //return const Text("There is data!");
+                return Column(
+                  children: [
+                    for (var post in snapshot.data!)
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                //페이지넘길때 모션추가
+                                builder: (context) => RevisePost(
+                                    title: post.title,
+                                    writer: post.writer,
+                                    likes: post.likes,
+                                    postId: post.id,
+                                    createdDate: post.createdDate)),
+                          ).then((value) {
+                            setState(() {});
+                          });
+                        },
+                        child: Post(post: post),
+                      ),
+
+                    const SizedBox(
+                      height: 60,
                     ),
+                    //FloatingActionButton(onPressed: () {})
+                  ],
+                );
+              }
 
-                  const SizedBox(
-                    height: 60,
-                  ),
-                  //FloatingActionButton(onPressed: () {})
-                ],
+              //return const Text("Loading....");
+              return const Center(
+                child: CircularProgressIndicator(), //로딩중 동그라미 그림
               );
-            }
-
-            //return const Text("Loading....");
-            return const Center(
-              child: CircularProgressIndicator(), //로딩중 동그라미 그림
-            );
-          },
+            },
+          ),
         ),
       ),
     );
