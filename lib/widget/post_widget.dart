@@ -16,7 +16,7 @@ class Post extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 0),
       decoration: const BoxDecoration(
         //border: Border.all(color: Colors.green, width: 3),
-        border: Border(bottom: BorderSide(color: Colors.black54)),
+        border: Border(bottom: BorderSide(color: Colors.black)),
         //borderRadius: BorderRadius.circular(20),
         //color: Colors.white,
       ),
@@ -70,7 +70,7 @@ class Post extends StatelessWidget {
                     Text(
                       "작성자:${post.writer}",
                       style: const TextStyle(
-                        color: Colors.black45,
+                        color: Colors.black54,
                         fontSize: 13,
                       ),
                     ),
@@ -80,7 +80,7 @@ class Post extends StatelessWidget {
                     Text(
                       post.createdDate.substring(0, 16),
                       style: const TextStyle(
-                        color: Colors.black45,
+                        color: Colors.black54,
                         fontSize: 13,
                       ),
                     ),

@@ -52,6 +52,22 @@ class ApiService {
     throw Exception();
   }
 
+  static Future<LIkeDataParse> likePlus(int postId) async {
+    final url = Uri.parse('$baseUrl/api/post/like/$postId');
+
+    final response = await http.get(
+      url,
+      headers: {'Authorization': token},
+    );
+
+    if (response.statusCode == 200) {
+      final posts = jsonDecode(utf8.decode(response.bodyBytes));
+      return LIkeDataParse.fromJson(posts);
+    } else {
+      throw Exception('서버와 연결이 원할하지 않음');
+    }
+  }
+
   static Future<RegitserModel?> loginMember(
       String name, String password) async {
     Timer t = Timer(const Duration(seconds: 3), () {
@@ -197,7 +213,7 @@ class ApiService {
       print('성공적으로 업로드했습니다');
       return response.data;
     } catch (e) {
-      //throw Exception('업로드에 실패했습니다');
+      Fluttertoast.showToast(msg: e.toString());
     }
   }
 

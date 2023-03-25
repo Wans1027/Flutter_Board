@@ -79,17 +79,6 @@ class _MyWidgetState extends State<RevisePost> {
             padding: const EdgeInsets.all(8),
             child: ElevatedButton(
                 onPressed: () async {
-                  FutureBuilder(
-                    future: ApiService.deletePost(widget.postId),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        Fluttertoast.showToast(msg: 'Error');
-                      }
-                      return const Center(
-                        child: CircularProgressIndicator(), //로딩중 동그라미 그림
-                      );
-                    },
-                  );
                   await deleteApi();
 
                   if (context.mounted) {
@@ -123,6 +112,9 @@ class _MyWidgetState extends State<RevisePost> {
           child: FloatingActionButton.extended(
             onPressed: () async {
               await reviseWriteApi();
+              if (formData != null) {
+                await ApiService.patchUserProfileImage(formData, widget.postId);
+              }
               if (context.mounted) Navigator.pop(context);
             },
             shape: const RoundedRectangleBorder(
