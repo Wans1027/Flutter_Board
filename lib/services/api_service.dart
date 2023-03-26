@@ -75,6 +75,7 @@ class ApiService {
 
       throw Error();
     });
+    print(token);
     return null;
   }
 
