@@ -1,12 +1,12 @@
 // ignore: file_names
 import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_board/model/register_model.dart';
 import 'package:flutter_board/screen/home_screen.dart';
 import 'package:flutter_board/services/api_service.dart';
 import 'package:http_parser/http_parser.dart';
-
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class WritePost extends StatefulWidget {
@@ -36,7 +36,10 @@ class _MyWidgetState extends State<WritePost> {
         imagefiles = pickedfiles;
         final List<MultipartFile> files = imagefiles!
             .map((img) => MultipartFile.fromFileSync(img.path,
-                contentType: MediaType("image", "jpg")))
+                contentType: MediaType(
+                  "image",
+                  "jpg",
+                )))
             .toList();
         formData = FormData.fromMap({"file": files});
         setState(() {});

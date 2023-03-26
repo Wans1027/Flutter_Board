@@ -1,10 +1,10 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_board/screen/login_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:firebase_core/firebase_core.dart';
 
 // void main() {
 //   //ApiService().createAlbum('newUser02', '1515');
@@ -107,7 +107,7 @@ Future<void> fbMsgForegroundHandler(
             channel.description,
             icon: '@mipmap/ic_launcher',
           ),
-          // iOS: const DarwinNotificationDetails(
+          // iOS: const IOSNotificationDetails(
           //   badgeNumber: 1,
           //   subtitle: 'the subtitle',
           //   sound: 'slow_spring_board.aiff',
