@@ -5,26 +5,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter_board/screen/login_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // void main() {
 //   //ApiService().createAlbum('newUser02', '1515');
 //   runApp(const MyApp());
 // }
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized(); // 바인딩
-  await Firebase.initializeApp();
-  FirebaseMessaging fbMsg = FirebaseMessaging.instance;
-
-  String? fcmToken =
-      await fbMsg.getToken(vapidKey: "BGRA_GV..........keyvalue");
-  //TODO : 서버에 해당 토큰을 저장하는 로직 구현
-  print("token-------------------------: $fcmToken");
-  //FCM 토큰은 사용자가 앱을 삭제, 재설치 및 데이터제거를 하게되면 기존의 토큰은 효력이 없고 새로운 토큰이 발금된다.
-  fbMsg.onTokenRefresh.listen((nToken) {
-    //TODO : 서버에 해당 토큰을 저장하는 로직 구현
-  });
+  await bindingAndGetToken();
   runApp(const MyApp());
+}
 
+Future<void> bindingAndGetToken() async {
+  FirebaseMessaging fbMsg = await bindingFCM(); //binding
+  final prefs = await SharedPreferences.getInstance(); //내부저장소 접근
+
+  if (prefs.getString("FCMTOKEN") == null) {
+    //데이터가 존재하지 않는다면
+    //토큰가져오기
+    String? fcmToken =
+        await fbMsg.getToken(vapidKey: "BGRA_GV..........keyvalue");
+    //TODO : 서버에 해당 토큰을 저장하는 로직 구현
+    print("token-------------------------: $fcmToken");
+    //FCM 토큰은 사용자가 앱을 삭제, 재설치 및 데이터제거를 하게되면 기존의 토큰은 효력이 없고 새로운 토큰이 발금된다.
+    fbMsg.onTokenRefresh.listen((nToken) {
+      //TODO : 서버에 해당 토큰을 저장하는 로직 구현
+    });
+
+    // 플랫폼 확인후 권한요청 및 Flutter Local Notification Plugin 설정
+    await notificationPluginConfig(fbMsg);
+    prefs.setString('FCMTOKEN', fcmToken!); //내부 데이터 생성
+  }
+  print("내부저장소FCMTOKEN: ${prefs.getString("FCMTOKEN")}");
+}
+
+Future<void> notificationPluginConfig(FirebaseMessaging fbMsg) async {
   // 플랫폼 확인후 권한요청 및 Flutter Local Notification Plugin 설정
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -55,6 +70,14 @@ void main() async {
   });
   //Message Click Event Implement
   await setupInteractedMessage(fbMsg);
+}
+
+Future<FirebaseMessaging> bindingFCM() async {
+  WidgetsFlutterBinding.ensureInitialized(); // 바인딩
+  await Firebase.initializeApp();
+  FirebaseMessaging fbMsg = FirebaseMessaging.instance;
+
+  return fbMsg;
 }
 
 //실행ㅇㅇㅇㅇㅇ

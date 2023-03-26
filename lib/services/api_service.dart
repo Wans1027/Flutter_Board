@@ -88,9 +88,9 @@ class ApiService {
 
       if (response.statusCode == 200) {
         var header = response.headers;
-        var authtoken = header["authorization"];
-        print(authtoken);
-        token = authtoken.toString();
+        var inToken = header["authorization"];
+        print(inToken);
+        token = inToken.toString();
         t.cancel();
         return null;
       } else if (response.statusCode == 401) {
