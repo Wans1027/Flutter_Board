@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_board/model/register_model.dart';
+import 'package:flutter_board/screen/myPostsView_screen.dart';
 import 'package:flutter_board/services/api_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http_parser/http_parser.dart';
@@ -78,21 +79,17 @@ class _MyWidgetState extends State<RevisePost> {
             padding: const EdgeInsets.all(8),
             child: ElevatedButton(
                 onPressed: () async {
-                  FutureBuilder(
-                    future: ApiService.deletePost(widget.postId),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        Fluttertoast.showToast(msg: 'Error');
-                      }
-                      return const Center(
-                        child: CircularProgressIndicator(), //로딩중 동그라미 그림
-                      );
-                    },
-                  );
+                  await deleteApi();
 
                   if (context.mounted) {
                     Fluttertoast.showToast(msg: '삭제되었습니다.');
-                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MyPostsView(),
+                        )).then((value) {
+                      setState(() {});
+                    });
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -114,11 +111,9 @@ class _MyWidgetState extends State<RevisePost> {
         child: FittedBox(
           child: FloatingActionButton.extended(
             onPressed: () async {
-              var post = await ApiService.reviseWrite(
-                  title.text, mainText.text, widget.postId);
-
+              await reviseWriteApi();
               if (formData != null) {
-                await ApiService.patchUserProfileImage(formData, post.id);
+                await ApiService.patchUserProfileImage(formData, widget.postId);
               }
               if (context.mounted) Navigator.pop(context);
             },
@@ -195,5 +190,25 @@ class _MyWidgetState extends State<RevisePost> {
         ),
       ),
     );
+  }
+
+  Future<void> reviseWriteApi() async {
+    try {
+      await ApiService.reviseWrite(title.text, mainText.text, widget.postId);
+
+      if (formData != null) {
+        await ApiService.patchUserProfileImage(formData, widget.postId);
+      }
+    } on Exception catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+  }
+
+  Future<void> deleteApi() async {
+    try {
+      await ApiService.deletePost(widget.postId);
+    } on Exception catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
   }
 }

@@ -29,3 +29,9 @@ class DetailDataParse {
       : textMain = json['textMain'],
         images = json['images'];
 }
+
+class LIkeDataParse {
+  final int like;
+
+  LIkeDataParse.fromJson(Map<String, dynamic> json) : like = json['like'];
+}

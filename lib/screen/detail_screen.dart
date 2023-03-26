@@ -27,14 +27,17 @@ class _DetailScreenState extends State<DetailScreen> {
   String imageURL = "http://10.0.2.2:8080/items/get/";
 
   int cnt = 0;
+  int ccnt = 0;
   bool isComment = true;
   FocusNode myFocusNode = FocusNode();
   int group = 0;
+  int like = 0;
 
   @override
   void initState() {
     super.initState();
     myFocusNode = FocusNode();
+    like = widget.likes;
     group = 0;
     try {
       comments = CommentApiService.getComments(widget.postId);
@@ -44,8 +47,6 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   void setState(VoidCallback fn) {
-    cnt = 0;
-    group = 0;
     isComment = true;
     comments = CommentApiService.getComments(widget.postId);
     super.setState(fn);
@@ -61,6 +62,7 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     cnt = 0;
+    ccnt = 0;
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 0,
@@ -103,8 +105,8 @@ class _DetailScreenState extends State<DetailScreen> {
                       onPressed: () async {
                         //댓글전송
                         isComment
-                            ? await submitComment(0, cnt + 1)
-                            : await submitComment(1, group);
+                            ? await submitComment(0, cnt + 1) //댓글전송
+                            : await submitComment(1, group); //대댓글전송
                         if (context.mounted) FocusScope.of(context).unfocus();
                         commentText.clear();
                       },
@@ -145,9 +147,21 @@ class _DetailScreenState extends State<DetailScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    widget.writer,
-                                    style: const TextStyle(fontSize: 22),
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.account_box_sharp),
+                                      Text(
+                                        widget.writer,
+                                        style: const TextStyle(fontSize: 22),
+                                      ),
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      //메인 좋아요
+                                      const Icon(Icons.thumb_up),
+                                      Text(like.toString())
+                                    ],
                                   ),
                                   Text(widget.createdDate)
                                 ],
@@ -190,6 +204,20 @@ class _DetailScreenState extends State<DetailScreen> {
                 ),
               ],
             ),
+            OutlinedButton.icon(
+              onPressed: () async {
+                try {
+                  await ApiService.likePlus(widget.postId);
+                  setState(() {
+                    like++;
+                  });
+                } on Exception catch (e) {
+                  Fluttertoast.showToast(msg: e.toString());
+                }
+              },
+              icon: const Icon(Icons.thumb_up_outlined),
+              label: const Text('추천하기'),
+            ),
             FutureBuilder(
               future: comments,
               builder: (context, snapshot) {
@@ -210,7 +238,7 @@ class _DetailScreenState extends State<DetailScreen> {
             ),
             const SizedBox(
               height: 30,
-            )
+            ),
           ],
         ),
       ),
@@ -228,6 +256,8 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Padding childComment(CommentDataParse com) {
+    ccnt++;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
       child: Container(
@@ -253,7 +283,13 @@ class _DetailScreenState extends State<DetailScreen> {
               decoration: const BoxDecoration(
                   color: Colors.black12,
                   borderRadius: BorderRadius.all(Radius.circular(10))),
-              child: commentStyle(com),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  commentStyle(com),
+                ],
+              ),
             ),
           ],
         ),
@@ -265,7 +301,9 @@ class _DetailScreenState extends State<DetailScreen> {
 
   Padding motherComment(CommentDataParse com) {
     cnt++;
+    ccnt++;
     var key = cnt;
+    var likeOrder = ccnt;
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
@@ -276,6 +314,7 @@ class _DetailScreenState extends State<DetailScreen> {
             border: Border(top: BorderSide(color: Colors.black))),
         //color: Colors.black26,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             commentStyle(com),
@@ -283,13 +322,13 @@ class _DetailScreenState extends State<DetailScreen> {
               //key: ValueKey(key),
               //대댓글달기
               onPressed: () async {
-                FocusScope.of(context).requestFocus(myFocusNode);
+                FocusScope.of(context).requestFocus(myFocusNode); //키보드 숨기기
                 isComment = false;
                 group = key;
                 //await submitComment(1, key);
               },
               icon: const Icon(Icons.chat_outlined),
-            )
+            ),
           ],
         ),
       ),
