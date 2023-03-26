@@ -30,7 +30,7 @@ class ApiService {
       }
       return postData;
     }
-    throw Error();
+    throw Exception('exceptioon!');
   }
 
   static Future<DetailDataParse> getTextMain(int postId) async {
@@ -73,9 +73,34 @@ class ApiService {
     Timer t = Timer(const Duration(seconds: 3), () {
       Fluttertoast.showToast(msg: "서버와 연결이 원활하지 않음");
 
-      throw Error();
+      return;
     });
-    print(token);
+    try {
+      final response = await http.post(
+        Uri.parse('http://10.0.2.2:8080/login'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(
+            <String, String>{'username': name, 'password': password}),
+      );
+      print(response.statusCode);
+
+      if (response.statusCode == 200) {
+        var header = response.headers;
+        var inToken = header["authorization"];
+        print(inToken);
+        token = inToken.toString();
+        t.cancel();
+        return null;
+      } else if (response.statusCode == 401) {
+        t.cancel();
+        throw Exception('사용자 정보가 일치하지 않음');
+      }
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
     return null;
   }
 
