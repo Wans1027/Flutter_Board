@@ -92,7 +92,15 @@ class ApiService {
       if (response.statusCode == 200) {
         var header = response.headers;
         var inToken = header["authorization"];
-        print(inToken);
+
+        if (Fcmtoken.isNewDevice) {
+          try {
+            transferFCMToken();
+          } on Exception catch (e) {
+            Fluttertoast.showToast(msg: e.toString());
+          }
+        }
+
         token = inToken.toString();
         t.cancel();
         return null;
@@ -253,7 +261,7 @@ class ApiService {
   }
 
   static Future<void> transferFCMToken() async {
-    final url = Uri.parse('$baseUrl/api/FCm/${tokenParse(token)}');
+    final url = Uri.parse('$baseUrl/api/fcmm/${tokenParse(token)}');
     final prefs = await SharedPreferences.getInstance(); //내부저장소 접근
     final response = await http.get(
       url,
