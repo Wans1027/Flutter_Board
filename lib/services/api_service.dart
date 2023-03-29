@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_board/main.dart';
 import 'package:flutter_board/model/register_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/mainboard_model.dart';
 
@@ -61,6 +63,7 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
+      if (Fcmtoken.isNewDevice) {}
       final posts = jsonDecode(utf8.decode(response.bodyBytes));
       return LIkeDataParse.fromJson(posts);
     } else {
@@ -247,5 +250,21 @@ class ApiService {
       return postData;
     }
     throw Error();
+  }
+
+  static Future<void> transferFCMToken() async {
+    final url = Uri.parse('$baseUrl/api/FCm/${tokenParse(token)}');
+    final prefs = await SharedPreferences.getInstance(); //내부저장소 접근
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': token,
+        'FCM-TOKEN': prefs.getString("FCMTOKEN")!
+      },
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception("FCMToken을 전달하지 못함");
+    }
   }
 }
