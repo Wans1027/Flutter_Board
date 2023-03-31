@@ -13,7 +13,7 @@ class ApiService {
   static const String baseUrl = "http://10.0.2.2:8080";
   static const String text = "posts";
   static String token = "";
-
+  static bool isNewDevice = false;
   static Future<List<BoardDataParse>> getAllPosts() async {
     List<BoardDataParse> postData = [];
 

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_board/screen/login_screen.dart';
+import 'package:flutter_board/services/api_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,6 +36,7 @@ Future<void> bindingAndGetToken() async {
     // 플랫폼 확인후 권한요청 및 Flutter Local Notification Plugin 설정
     await notificationPluginConfig(fbMsg);
     prefs.setString('FCMTOKEN', fcmToken!); //내부 데이터 생성
+    ApiService.isNewDevice = true;
   }
   print("내부저장소FCMTOKEN: ${prefs.getString("FCMTOKEN")}");
 }
