@@ -20,6 +20,7 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
   // 상태 변화가 일어나는 필드
   final TextEditingController _controller = TextEditingController();
   String roomId = "5fcd3ad3-d125-4ae9-824d-a3ff13902fdb";
+  var pwdWidgets = <Widget>[];
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +45,20 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
               stream: widget.channel.stream,
               // 채널 stream에 변화가 발생하면 빌더 호출
               builder: (context, snapshot) {
+                setState(() {
+                  pwdWidgets.add(Row(
+                    children: [
+                      Container(
+                          color: Colors.amber,
+                          child:
+                              Text(snapshot.hasData ? '${snapshot.data}' : ''))
+                    ],
+                  ));
+                });
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24.0),
                   // 수신 데이터가 존재할 경우 해당 데이터를 텍스트로 출력
-                  child: Text(snapshot.hasData ? '${snapshot.data}' : ''),
+                  child: Column(children: pwdWidgets),
                 );
               },
             )
@@ -56,7 +67,9 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
       ),
       // 플로팅 버튼이 눌리면 _sendMessage 함수 호출
       floatingActionButton: FloatingActionButton(
-          onPressed: _sendMessage,
+          onPressed: () {
+            _sendMessage();
+          },
           tooltip: 'Send message',
           child: const Icon(Icons.send)),
     );
