@@ -1,16 +1,33 @@
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter/material.dart';
 
-class MyWidget extends StatefulWidget {
-  const MyWidget({super.key});
+class TestScreen extends StatefulWidget {
+  const TestScreen({super.key});
 
   @override
-  State<MyWidget> createState() => _MyWidgetState();
+  State<TestScreen> createState() => _TestScreen();
 }
 
-class _MyWidgetState extends State<MyWidget> {
+class _TestScreen extends State<TestScreen> {
+  var pwdWidgets = <Widget>[];
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(title: const Text("data")),
+      body: SingleChildScrollView(
+          child: Column(
+        children: pwdWidgets,
+      )),
+      floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              pwdWidgets.add(Row(
+                children: const [Text("data")],
+              ));
+            });
+          },
+          tooltip: 'Send message',
+          child: const Icon(Icons.send)),
+    );
   }
 }
