@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_board/screen/login_screen.dart';
+import 'package:flutter_board/screen/websocket_screen.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -93,8 +93,8 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: LoginScreen());
-    //return const MaterialApp(home: WritePost());
+    return MaterialApp(home: WebSocketScreen());
+    //return const MaterialApp(home: LoginScreen());
   }
 }
 
