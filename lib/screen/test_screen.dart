@@ -22,7 +22,9 @@ class _TestScreen extends State<TestScreen> {
           onPressed: () {
             setState(() {
               pwdWidgets.add(Row(
-                children: const [Text("data")],
+                children: [
+                  Container(color: Colors.amber, child: const Text("data"))
+                ],
               ));
             });
           },
