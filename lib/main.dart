@@ -1,11 +1,11 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_board/screen/login_screen.dart';
 import 'package:flutter_board/services/api_service.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // void main() {
@@ -17,16 +17,22 @@ void main() async {
   runApp(const MyApp());
 }
 
+class Fcmtoken {
+  static bool isNewDevice = false;
+}
+
 Future<void> bindingAndGetToken() async {
   FirebaseMessaging fbMsg = await bindingFCM(); //binding
   final prefs = await SharedPreferences.getInstance(); //내부저장소 접근
 
   if (prefs.getString("FCMTOKEN") == null) {
     //데이터가 존재하지 않는다면
+    Fcmtoken.isNewDevice = true;
     //토큰가져오기
     String? fcmToken =
         await fbMsg.getToken(vapidKey: "BGRA_GV..........keyvalue");
     //TODO : 서버에 해당 토큰을 저장하는 로직 구현
+
     print("token-------------------------: $fcmToken");
     //FCM 토큰은 사용자가 앱을 삭제, 재설치 및 데이터제거를 하게되면 기존의 토큰은 효력이 없고 새로운 토큰이 발금된다.
     fbMsg.onTokenRefresh.listen((nToken) {
@@ -132,7 +138,7 @@ Future<void> fbMsgForegroundHandler(
             channel.description,
             icon: '@mipmap/ic_launcher',
           ),
-          // iOS: const DarwinNotificationDetails(
+          // iOS: const IOSNotificationDetails(
           //   badgeNumber: 1,
           //   subtitle: 'the subtitle',
           //   sound: 'slow_spring_board.aiff',
