@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 
 class CommentApiService {
-  static const String baseUrl = "http://10.0.2.2:8080";
+  static const String baseUrl = ApiService.baseUrl;
 
   static Future<RegitserModel> commentWrite(
       int postsId, String comment, int hierarchy, int order, int group) async {
@@ -57,7 +57,7 @@ class CommentApiService {
       }
       return postData;
     }
-    throw Error();
+    throw Exception('서버와 응답이 되지 않음.');
   }
 
   static int tokenParse(String jwt) {

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_board/main.dart';
+import 'package:flutter_board/model/main_model.dart';
 import 'package:flutter_board/model/register_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -16,6 +17,8 @@ class ApiService {
   static const String text = "posts";
   static String token = "";
   static bool isNewDevice = false;
+  static String userName = "";
+  static String nickName = "";
   static Future<List<BoardDataParse>> getAllPosts() async {
     List<BoardDataParse> postData = [];
 
@@ -51,6 +54,24 @@ class ApiService {
       // TODO
       print(e);
     }
+    throw Exception();
+  }
+
+  static Future<void> getUserName(int memberId) async {
+    //유저 이름 가져오기
+    final url = Uri.parse('$baseUrl/api/member/$memberId');
+
+    final response = await http.get(
+      url,
+      headers: {'Authorization': token},
+    );
+
+    if (response.statusCode == 200) {
+      final posts = jsonDecode(utf8.decode(response.bodyBytes));
+      userName = UserModel.fromJson(posts).username;
+      nickName = UserModel.fromJson(posts).nickName;
+    }
+
     throw Exception();
   }
 
@@ -92,6 +113,7 @@ class ApiService {
       if (response.statusCode == 200) {
         var header = response.headers;
         var inToken = header["authorization"];
+        token = inToken.toString();
 
         if (Fcmtoken.isNewDevice) {
           try {
@@ -101,7 +123,12 @@ class ApiService {
           }
         }
 
-        token = inToken.toString();
+        try {
+          getUserName(tokenParse(token));
+        } on Exception catch (e) {
+          Fluttertoast.showToast(msg: e.toString());
+        }
+
         t.cancel();
         return null;
       } else if (response.statusCode == 401) {
@@ -261,7 +288,7 @@ class ApiService {
   }
 
   static Future<void> transferFCMToken() async {
-    final url = Uri.parse('$baseUrl/api/fcmm/${tokenParse(token)}');
+    final url = Uri.parse('$baseUrl/api/fcm/${tokenParse(token)}');
     final prefs = await SharedPreferences.getInstance(); //내부저장소 접근
     final response = await http.get(
       url,

@@ -1,11 +1,20 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_board/services/api_service.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:http/http.dart' as http;
 
 class WebSocketScreen extends StatefulWidget {
-  WebSocketScreen({super.key});
+  final String roomUUID, roomName;
+
+  WebSocketScreen({
+    super.key,
+    required this.roomUUID,
+    required this.roomName,
+  });
 
   // 웹소켓 채널을 생성
   final WebSocketChannel channel =
@@ -19,15 +28,17 @@ class WebSocketScreen extends StatefulWidget {
 class _WebSocketScreenState extends State<WebSocketScreen> {
   // 상태 변화가 일어나는 필드
   final TextEditingController _controller = TextEditingController();
-  String roomId = "9dd0658c-17c6-4b7b-856f-554b0960ea9e";
+  late String roomId;
   var pwdWidgets = <Widget>[];
+  var userName = ApiService.userName;
   //ScrollController scrollController = ScrollController();
+  bool isMine = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // 앱바에 타이틀 텍스트 설정. widget을 통해 MyHomePage의 필드에 접근 가능
-      appBar: AppBar(title: const Text("웹소켓 테스입니다.")),
+      appBar: AppBar(title: Text(widget.roomName)),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
@@ -53,7 +64,10 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
                     //     ? ChatModel.fromJson(jsonDecode(snapshot.data)).message//'${snapshot.data}' //ChatModel.fromJson(jsonDecode(snapshot.data)).message
                     //     : ''));
                     pwdWidgets.add(chat(
-                        ChatModel.fromJson(jsonDecode(snapshot.data)).message));
+                        ChatModel.fromJson(jsonDecode(snapshot.data)).message,
+                        ChatModel.fromJson(jsonDecode(snapshot.data)).sender,
+                        isMine));
+                    isMine = false;
                   }
                   print("stremaam");
                   return Padding(
@@ -83,11 +97,12 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
 
   // 플로팅 버튼이 눌리면 호출
   void _sendMessage() {
+    isMine = true;
     // TextFormField에 입력된 텍스트가 존재하면
     if (_controller.text.isNotEmpty) {
       // 해당 텍스트를 서버로 전송. widget을 통해 MyHomePage의 필드에 접근 가능
       widget.channel.sink
-          .add(createData("TALK", roomId, "FlutterUser", _controller.text));
+          .add(createData("TALK", roomId, userName, _controller.text));
     }
   }
 
@@ -104,8 +119,17 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
   // 상태 클래스가 종료될 때 호출
   @override
   void dispose() {
+    //방나감
     widget.channel.sink
-        .add(createData("OUT", roomId, "FlutterUser", _controller.text));
+        .add(createData("OUT", roomId, userName, _controller.text));
+
+    //TODO: 해당방의 세션이 0이라면 해당 방을 삭제
+    try {
+      deleteRoom(roomId);
+    } on Exception catch (e) {
+      Fluttertoast.showToast(msg: e.toString());
+    }
+    print("Out of Room");
     // 채널을 닫음
     widget.channel.sink.close();
     super.dispose();
@@ -113,9 +137,10 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
 
   @override
   void initState() {
+    roomId = widget.roomUUID;
     // 해당방에 접속
     widget.channel.sink
-        .add(createData("ENTER", roomId, "FlutterUser", _controller.text));
+        .add(createData("ENTER", roomId, userName, _controller.text));
     super.initState();
   }
 
@@ -132,16 +157,26 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
   //   }
   // }
 
-  Row chat(String text) {
+  Row chat(String text, String userName, bool isMine) {
     return Row(
+      mainAxisAlignment:
+          isMine ? MainAxisAlignment.start : MainAxisAlignment.end,
       children: [
-        Container(
-          margin: const EdgeInsets.all(6),
-          padding: const EdgeInsets.all(9),
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              color: Colors.amber),
-          child: Text(text),
+        Column(
+          children: [
+            Text(
+              userName,
+              style: const TextStyle(fontSize: 10),
+            ),
+            Container(
+              margin: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(9),
+              decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  color: Colors.amber),
+              child: Text(text),
+            ),
+          ],
         )
       ],
     );
@@ -164,6 +199,21 @@ class ChatRoom {
   ChatRoom.fromJson(Map<String, dynamic> json)
       : roomId = json['roomId'],
         name = json['name'];
+}
+
+Future<void> deleteRoom(String roomId) async {
+  final url = Uri.parse('http://10.0.2.2:8080/chat?name=$roomId');
+  final response = await http.delete(
+    url,
+    // headers: {
+    //   'Authorization': token,
+    //   'FCM-TOKEN': prefs.getString("FCMTOKEN")!
+    // },
+  );
+
+  if (response.statusCode != 200) {
+    throw Exception("Exceiption");
+  }
 }
 
 // Future<ChatRoom> postCreateRoom(String title) async {

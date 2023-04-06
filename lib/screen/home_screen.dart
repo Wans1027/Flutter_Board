@@ -151,12 +151,6 @@ class SideView extends StatelessWidget {
       child: ListView(
         children: [
           ListTile(
-            leading: Icon(Icons.settings, color: Colors.grey[850]),
-            title: const Text('Setting'),
-            onTap: () {},
-            trailing: const Icon(Icons.add),
-          ),
-          ListTile(
             leading: Icon(Icons.question_answer, color: Colors.grey[850]),
             title: const Text('내가 쓴 게시글'),
             onTap: () {
@@ -167,6 +161,25 @@ class SideView extends StatelessWidget {
                     builder: (context) => const MyPostsView(),
                   ));
             },
+            trailing: const Icon(Icons.add),
+          ),
+          ListTile(
+            leading: Icon(Icons.question_answer, color: Colors.grey[850]),
+            title: const Text('오픈채팅'),
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MyPostsView(),
+                  ));
+            },
+            trailing: const Icon(Icons.add),
+          ),
+          ListTile(
+            leading: Icon(Icons.settings, color: Colors.grey[850]),
+            title: const Text('Setting'),
+            onTap: () {},
             trailing: const Icon(Icons.add),
           ),
         ],

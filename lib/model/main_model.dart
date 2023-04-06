@@ -12,6 +12,14 @@ class TokenModel {
   TokenModel.fromJson(Map<String, dynamic> json) : id = json['id'];
 }
 
+class UserModel {
+  final String username, nickName;
+
+  UserModel.fromJson(Map<String, dynamic> json)
+      : username = json['username'],
+        nickName = json['nickName'];
+}
+
 /*
 Widget _FetchAllPosts(context) {
     return FutureBuilder(
