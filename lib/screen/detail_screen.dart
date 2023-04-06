@@ -189,11 +189,12 @@ class _DetailScreenState extends State<DetailScreen> {
                                     //height: 300,
                                     //decoration: BoxDecoration(border: Border.all()),
                                     child: Image(
-                                        image: NetworkImage("$imageURL$image",
-                                            headers: {
-                                          "Authorization":
-                                              "Bearer ${ApiService.token}"
-                                        })) //Image.network("$imageURL$image"),
+                                      image: NetworkImage("$imageURL$image",
+                                          headers: {
+                                            "Authorization":
+                                                "Bearer ${ApiService.token}"
+                                          }),
+                                    ) //Image.network("$imageURL$image"),
                                     ),
                           ],
                         ),

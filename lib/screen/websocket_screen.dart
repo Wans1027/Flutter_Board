@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_board/screen/openChatting_screen.dart';
 import 'package:flutter_board/services/api_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:web_socket_channel/io.dart';
@@ -33,66 +34,90 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
   var userName = ApiService.userName;
   //ScrollController scrollController = ScrollController();
   bool isMine = false;
+  ScrollController scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // 앱바에 타이틀 텍스트 설정. widget을 통해 MyHomePage의 필드에 접근 가능
-      appBar: AppBar(title: Text(widget.roomName)),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Form(
-                child: TextFormField(
-                  // 컨트롤러 항목에 _controller 설정
-                  controller: _controller,
-                  decoration:
-                      const InputDecoration(labelText: 'Send a message'),
+    return WillPopScope(
+      onWillPop: () {
+        dispose();
+        return Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const OpenChattingScreen(),
+            )).then((value) {
+          setState(() {});
+          throw false;
+        });
+      },
+      child: Scaffold(
+        // 앱바에 타이틀 텍스트 설정. widget을 통해 MyHomePage의 필드에 접근 가능
+        appBar: AppBar(title: Text(widget.roomName)),
+
+        body: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: SingleChildScrollView(
+            controller: scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                // Stream을 처리하기 위한 StreamBuilder 추가
+                StreamBuilder(
+                  // 채널의 스트림을 stream 항목에 설정. widget을 통해 MyHomePage의 필드에 접근 가능
+                  stream: widget.channel.stream,
+                  // 채널 stream에 변화가 발생하면 빌더 호출
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      pwdWidgets.add(chat(
+                          ChatModel.fromJson(jsonDecode(snapshot.data)).message,
+                          ChatModel.fromJson(jsonDecode(snapshot.data)).sender,
+                          isMine));
+                      isMine = false;
+                    }
+                    print("stremaam");
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24.0),
+                      // 수신 데이터가 존재할 경우 해당 데이터를 텍스트로 출력
+                      child: Column(children: pwdWidgets),
+                    );
+                  },
                 ),
-              ),
-              // Stream을 처리하기 위한 StreamBuilder 추가
-              StreamBuilder(
-                // 채널의 스트림을 stream 항목에 설정. widget을 통해 MyHomePage의 필드에 접근 가능
-                stream: widget.channel.stream,
-                // 채널 stream에 변화가 발생하면 빌더 호출
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    // pwdWidgets.add(chat(snapshot.hasData
-                    //     ? ChatModel.fromJson(jsonDecode(snapshot.data)).message//'${snapshot.data}' //ChatModel.fromJson(jsonDecode(snapshot.data)).message
-                    //     : ''));
-                    pwdWidgets.add(chat(
-                        ChatModel.fromJson(jsonDecode(snapshot.data)).message,
-                        ChatModel.fromJson(jsonDecode(snapshot.data)).sender,
-                        isMine));
-                    isMine = false;
-                  }
-                  print("stremaam");
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
-                    // 수신 데이터가 존재할 경우 해당 데이터를 텍스트로 출력
-                    child: Column(children: pwdWidgets),
-                  );
-                },
-              )
-            ],
+                Form(
+                  child: TextFormField(
+                    // 컨트롤러 항목에 _controller 설정
+                    controller: _controller,
+                    decoration:
+                        const InputDecoration(labelText: 'Send a message'),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
+        // 플로팅 버튼이 눌리면 _sendMessage 함수 호출
+        floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _sendMessage();
+              scrollJumpToBottom();
+            },
+            tooltip: 'Send message',
+            child: const Icon(Icons.send)),
       ),
-      // 플로팅 버튼이 눌리면 _sendMessage 함수 호출
-      floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            _sendMessage();
-          },
-          tooltip: 'Send message',
-          child: const Icon(Icons.send)),
     );
   }
 
+  Future<void> push(BuildContext context) async {
+    Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const OpenChattingScreen()))
+        .then((value) {
+      setState(() {});
+    });
+  }
+
   void scrollJumpToBottom() {
-    //scrollController.jumpTo(scrollController.position.maxScrollExtent);
+    Future.delayed(const Duration(milliseconds: 30), () {
+      scrollController.jumpTo(scrollController.position.maxScrollExtent);
+    });
   }
 
   // 플로팅 버튼이 눌리면 호출
@@ -137,6 +162,7 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
 
   @override
   void initState() {
+    //myFocusNode = FocusNode();
     roomId = widget.roomUUID;
     // 해당방에 접속
     widget.channel.sink
@@ -160,7 +186,7 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
   Row chat(String text, String userName, bool isMine) {
     return Row(
       mainAxisAlignment:
-          isMine ? MainAxisAlignment.start : MainAxisAlignment.end,
+          isMine ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
         Column(
           children: [

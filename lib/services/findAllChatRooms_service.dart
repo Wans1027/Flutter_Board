@@ -10,10 +10,10 @@ import '../model/mainboard_model.dart';
 class ChatApiService {
   static const String baseUrl = ApiService.baseUrl;
 
-  static Future<List<ChatRoomDataParse>> getComments(int postId) async {
+  static Future<List<ChatRoomDataParse>> getChattingRooms() async {
     List<ChatRoomDataParse> postData = [];
     var token = ApiService.token;
-    final url = Uri.parse('$baseUrl/api/comment/$postId');
+    final url = Uri.parse('$baseUrl/chat');
     final response = await http.get(
       url,
       headers: {'Authorization': token},
@@ -27,6 +27,18 @@ class ChatApiService {
       return postData;
     }
     throw Exception('서버와 응답이 되지 않음.');
+  }
+
+  static Future<void> createChattingRoom(String roomName) async {
+    var token = ApiService.token;
+    final url = Uri.parse('$baseUrl/chat?name=$roomName');
+    final response = await http.post(
+      url,
+      headers: {'Authorization': token},
+    );
+    if (response.statusCode != 200) {
+      throw Exception('서버와 응답이 되지 않음.');
+    }
   }
 }
 

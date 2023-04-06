@@ -70,9 +70,10 @@ class ApiService {
       final posts = jsonDecode(utf8.decode(response.bodyBytes));
       userName = UserModel.fromJson(posts).username;
       nickName = UserModel.fromJson(posts).nickName;
+      print("username: $userName, nickName: $nickName");
+    } else {
+      throw Exception();
     }
-
-    throw Exception();
   }
 
   static Future<LIkeDataParse> likePlus(int postId) async {

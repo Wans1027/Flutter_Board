@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_board/screen/detail_screen.dart';
 import 'package:flutter_board/screen/myPostsView_screen.dart';
+import 'package:flutter_board/screen/openChatting_screen.dart';
 import 'package:flutter_board/screen/writePost_screen.dart';
 import 'package:flutter_board/services/api_service.dart';
 
@@ -171,7 +172,7 @@ class SideView extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const MyPostsView(),
+                    builder: (context) => const OpenChattingScreen(),
                   ));
             },
             trailing: const Icon(Icons.add),
