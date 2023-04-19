@@ -3,6 +3,7 @@ import 'package:flutter_board/screen/home_screen.dart';
 import 'package:flutter_board/screen/websocket_screen.dart';
 import 'package:flutter_board/services/findAllChatRooms_service.dart';
 import 'package:flutter_board/widget/chatRoom_widget.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class OpenChattingScreen extends StatefulWidget {
   const OpenChattingScreen({super.key});
@@ -13,6 +14,7 @@ class OpenChattingScreen extends StatefulWidget {
 
 class _OpenChattingScreen extends State<OpenChattingScreen> {
   late Future<List<ChatRoomDataParse>> mainboard;
+  final TextEditingController _controller = TextEditingController();
 
   @override
   void initState() {
@@ -63,7 +65,9 @@ class _OpenChattingScreen extends State<OpenChattingScreen> {
           ),
           actions: [
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  flutterDialog();
+                },
                 icon: const Icon(
                   Icons.fiber_new_rounded,
                 ))
@@ -119,11 +123,11 @@ class _OpenChattingScreen extends State<OpenChattingScreen> {
     );
   }
 
-  void FlutterDialog() {
+  void flutterDialog() {
     showDialog(
         context: context,
         //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
-        barrierDismissible: false,
+        //barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
@@ -132,28 +136,55 @@ class _OpenChattingScreen extends State<OpenChattingScreen> {
             //Dialog Main Title
             title: Column(
               children: const [
-                Text("Dialog Title"),
+                Text("오픈채팅방생성"),
               ],
             ),
             //
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const <Widget>[
-                Text(
-                  "Dialog Content",
+              children: [
+                const Text(
+                  "오픈채팅방이름",
+                ),
+                Form(
+                  child: TextFormField(
+                    // 컨트롤러 항목에 _controller 설정
+                    controller: _controller,
+                    decoration: const InputDecoration(labelText: '채팅방이름'),
+                  ),
                 ),
               ],
             ),
             actions: <Widget>[
               TextButton(
-                child: const Text("확인"),
-                onPressed: () {
-                  Navigator.pop(context);
+                child: const Text("방생성"),
+                onPressed: () async {
+                  try {
+                    var createRoom = await ChatApiService.createChattingRoom(
+                        _controller.text);
+                    if (context.mounted) pageRouteWebsocket(createRoom);
+                  } on Exception catch (e) {
+                    Fluttertoast.showToast(msg: e.toString());
+                  }
+
+                  //Navigator.of(context).pop();
                 },
               ),
             ],
           );
         });
+  }
+
+  void pageRouteWebsocket(CreateRoomDataParse createRoom) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+          //페이지넘길때 모션추가
+          builder: (context) => WebSocketScreen(
+                roomUUID: createRoom.roomId,
+                roomName: createRoom.name,
+              )),
+    );
   }
 }

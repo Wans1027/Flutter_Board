@@ -29,16 +29,18 @@ class ChatApiService {
     throw Exception('서버와 응답이 되지 않음.');
   }
 
-  static Future<void> createChattingRoom(String roomName) async {
+  static Future<CreateRoomDataParse> createChattingRoom(String roomName) async {
     var token = ApiService.token;
     final url = Uri.parse('$baseUrl/chat?name=$roomName');
     final response = await http.post(
       url,
       headers: {'Authorization': token},
     );
-    if (response.statusCode != 200) {
-      throw Exception('서버와 응답이 되지 않음.');
+    if (response.statusCode == 200) {
+      return CreateRoomDataParse.fromJson(
+          jsonDecode(utf8.decode(response.bodyBytes)));
     }
+    throw Exception('서버와 응답이 되지 않음.');
   }
 }
 
@@ -49,4 +51,12 @@ class ChatRoomDataParse {
       : roomId = json['roomId'],
         name = json['name'],
         count = json['count'];
+}
+
+class CreateRoomDataParse {
+  final String roomId, name;
+
+  CreateRoomDataParse.fromJson(Map<String, dynamic> json)
+      : roomId = json['roomId'],
+        name = json['name'];
 }
