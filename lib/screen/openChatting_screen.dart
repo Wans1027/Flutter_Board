@@ -63,7 +63,9 @@ class _OpenChattingScreen extends State<OpenChattingScreen> {
           ),
           actions: [
             IconButton(
-                onPressed: () {},
+                onPressed: () {
+                  FlutterDialog();
+                },
                 icon: const Icon(
                   Icons.fiber_new_rounded,
                 ))

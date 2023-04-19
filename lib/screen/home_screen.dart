@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void setState(VoidCallback fn) {
     super.setState(fn);
-    mainboard = ApiService.getAllPosts(0);
+    //mainboard = ApiService.getAllPosts(0);
 
     print("state");
   }
@@ -83,7 +83,9 @@ class _HomeScreenState extends State<HomeScreen> {
           //edgeOffset: 220.0, // 스피너가 나오는 위치
           strokeWidth: 3.0, // 스피너 화살표 크기
           onRefresh: () async {
-            setState(() {});
+            setState(() {
+              mainboard = ApiService.getAllPosts(0);
+            });
             //mainboard = ApiService.getAllPosts();
           },
           child: SingleChildScrollView(
@@ -124,22 +126,26 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       //FloatingActionButton(onPressed: () {})
                       //ListView
-                      ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: ApiService.totalPage,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              //페이지 버튼
-                              child: OutlinedButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      mainboard = ApiService.getAllPosts(index);
-                                    });
-                                  },
-                                  child: Text(index.toString())),
-                            );
-                          }),
+                      SizedBox(
+                        height: 100,
+                        child: ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: ApiService.totalPage,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                //페이지 버튼
+                                child: OutlinedButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        mainboard =
+                                            ApiService.getAllPosts(index);
+                                      });
+                                    },
+                                    child: Text((index + 1).toString())),
+                              );
+                            }),
+                      ),
                     ],
                   );
                 }

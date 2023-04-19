@@ -23,8 +23,7 @@ class ApiService {
   static Future<List<BoardDataParse>> getAllPosts(int index) async {
     List<BoardDataParse> postData = [];
 
-    final url =
-        Uri.parse('$baseUrl/api/posts?page=$index&size=20&sort=id,DESC');
+    final url = Uri.parse('$baseUrl/api/posts?page=$index&size=3&sort=id,DESC');
     final response = await http.get(
       url,
       headers: {'Authorization': token},
@@ -32,7 +31,8 @@ class ApiService {
     if (response.statusCode == 200) {
       final posts = jsonDecode(utf8.decode(response.bodyBytes));
       final aaa = MainBoardModel.fromJson(posts).content;
-      totalPage = MainBoardModel.fromJson(posts).totalElements;
+      //totalPage = MainBoardModel.fromJson(posts).totalElements;
+      totalPage = MainBoardTotalPageModel.fromJson(posts).totalPages;
       for (var element in aaa) {
         postData.add(BoardDataParse.fromJson(element));
       }

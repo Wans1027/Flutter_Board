@@ -7,6 +7,13 @@ class MainBoardModel {
         totalElements = json['totalElements'];
 }
 
+class MainBoardTotalPageModel {
+  final int totalPages;
+
+  MainBoardTotalPageModel.fromJson(Map<String, dynamic> json)
+      : totalPages = json['totalPages'];
+}
+
 class BoardDataParse {
   final int id, memberId, likes;
   final String title, writer, createdDate;
