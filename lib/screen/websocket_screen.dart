@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_board/screen/openChatting_screen.dart';
 import 'package:flutter_board/services/api_service.dart';
+import 'package:http/http.dart' as http;
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:http/http.dart' as http;
 
 class WebSocketScreen extends StatefulWidget {
   final String roomUUID, roomName;
@@ -72,6 +72,7 @@ class _WebSocketScreenState extends State<WebSocketScreen> {
                           ChatModel.fromJson(jsonDecode(snapshot.data)).sender,
                           isMine));
                       isMine = false;
+                      scrollJumpToBottom();
                     }
                     print("stremaam");
                     return Padding(
