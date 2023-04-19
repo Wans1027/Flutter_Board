@@ -19,10 +19,12 @@ class ApiService {
   static bool isNewDevice = false;
   static String userName = "";
   static String nickName = "";
-  static Future<List<BoardDataParse>> getAllPosts() async {
+  static int totalPage = 0;
+  static Future<List<BoardDataParse>> getAllPosts(int index) async {
     List<BoardDataParse> postData = [];
 
-    final url = Uri.parse('$baseUrl/api/posts?page=0&size=20&sort=id,DESC');
+    final url =
+        Uri.parse('$baseUrl/api/posts?page=$index&size=20&sort=id,DESC');
     final response = await http.get(
       url,
       headers: {'Authorization': token},
@@ -30,6 +32,7 @@ class ApiService {
     if (response.statusCode == 200) {
       final posts = jsonDecode(utf8.decode(response.bodyBytes));
       final aaa = MainBoardModel.fromJson(posts).content;
+      totalPage = MainBoardModel.fromJson(posts).totalElements;
       for (var element in aaa) {
         postData.add(BoardDataParse.fromJson(element));
       }
@@ -238,7 +241,7 @@ class ApiService {
 
   static Future<dynamic> patchUserProfileImage(
       dynamic input, int postId) async {
-    print("프로필 사진을 서버에 업로드 합니다.");
+    print("사진을 서버에 업로드 합니다.");
     var dio = Dio();
     try {
       dio.options.contentType = 'multipart/form-data';
