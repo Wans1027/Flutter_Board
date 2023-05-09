@@ -30,7 +30,7 @@ class _MyWidgetState extends State<WritePost> {
 
   openImages() async {
     try {
-      var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 70);
+      var pickedfiles = await imgpicker.pickMultiImage(imageQuality: 17);
       //you can use ImageCourse.camera for Camera capture
       if (pickedfiles != null) {
         imagefiles = pickedfiles;
