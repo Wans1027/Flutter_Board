@@ -13,8 +13,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/mainboard_model.dart';
 
 class ApiService {
-  static const String baseUrl = "http://10.0.2.2:8080";
+  static const String baseUrl =
+      "http://ec2-3-34-91-1.ap-northeast-2.compute.amazonaws.com:8080";
   static const String text = "posts";
+  static const String dns =
+      "ec2-3-34-91-1.ap-northeast-2.compute.amazonaws.com";
   static String token = "";
   static bool isNewDevice = false;
   static String userName = "";
@@ -105,7 +108,7 @@ class ApiService {
     });
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:8080/login'),
+        Uri.parse('http://$dns:8080/login'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

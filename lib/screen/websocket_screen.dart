@@ -19,7 +19,7 @@ class WebSocketScreen extends StatefulWidget {
   // 웹소켓 채널을 생성
   final WebSocketChannel channel =
       // 웹 서버에 접속 시도
-      IOWebSocketChannel.connect('ws://10.0.2.2:8080/ws/chat');
+      IOWebSocketChannel.connect('ws://${ApiService.dns}:8080/ws/chat');
 
   @override
   State<WebSocketScreen> createState() => _WebSocketScreenState();
@@ -228,7 +228,7 @@ class ChatRoom {
 }
 
 Future<void> deleteRoom(String roomId) async {
-  final url = Uri.parse('http://10.0.2.2:8080/chat?name=$roomId');
+  final url = Uri.parse('http://${ApiService.dns}:8080/chat?name=$roomId');
   final response = await http.delete(
     url,
     // headers: {

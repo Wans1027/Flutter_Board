@@ -24,7 +24,8 @@ class _DetailScreenState extends State<DetailScreen> {
   late Future<DetailDataParse> mainText;
   late Future<List<CommentDataParse>> comments;
   final commentText = TextEditingController();
-  String imageURL = "http://10.0.2.2:8080/items/get/";
+
+  String imageURL = "http://${ApiService.dns}:8080/items/get/";
 
   int cnt = 0;
   int ccnt = 0;
