@@ -75,8 +75,8 @@ class ApiService {
     if (response.statusCode == 200) {
       final posts = jsonDecode(utf8.decode(response.bodyBytes));
       userName = UserModel.fromJson(posts).username;
-      nickName = UserModel.fromJson(posts).nickName;
-      print("username: $userName, nickName: $nickName");
+      //nickName = UserModel.fromJson(posts).nickName;
+      //print("username: $userName, nickName: $nickName");
     } else {
       throw Exception();
     }

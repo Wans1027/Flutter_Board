@@ -13,11 +13,10 @@ class TokenModel {
 }
 
 class UserModel {
-  final String username, nickName;
+  final String username; //nickName;
 
-  UserModel.fromJson(Map<String, dynamic> json)
-      : username = json['username'],
-        nickName = json['nickName'];
+  UserModel.fromJson(Map<String, dynamic> json) : username = json['username'];
+  //nickName = json['nickName'];
 }
 
 /*
