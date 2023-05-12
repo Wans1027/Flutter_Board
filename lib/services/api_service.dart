@@ -14,10 +14,10 @@ import '../model/mainboard_model.dart';
 
 class ApiService {
   static const String baseUrl =
-      "http://ec2-3-34-91-1.ap-northeast-2.compute.amazonaws.com:8080";
+      "http://ec2-54-180-8-227.ap-northeast-2.compute.amazonaws.com:8080";
   static const String text = "posts";
   static const String dns =
-      "ec2-3-34-91-1.ap-northeast-2.compute.amazonaws.com";
+      "ec2-54-180-8-227.ap-northeast-2.compute.amazonaws.com";
   static String token = "";
   static bool isNewDevice = false;
   static String userName = "";
